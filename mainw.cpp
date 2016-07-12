@@ -27,20 +27,20 @@ MainW::MainW(QWidget *parent)
 	this->setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
 	this->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
-	QDockWidget *wordListDockWidget = new QDockWidget(tr("Word List"), this);
+	this->wordListDockWidget = new QDockWidget(tr("Word List"), this);
 	wordListDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	wordListDockWidget->setWidget(this->wordListWidget);
 	wordListDockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
 	this->addDockWidget(Qt::LeftDockWidgetArea, wordListDockWidget);
 
-	QDockWidget *wordPadDockWidget = new QDockWidget(tr("Word"), this);
+	this->wordPadDockWidget = new QDockWidget(tr("Word"), this);
 	wordPadDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 	wordPadDockWidget->setWidget(this->wordPadWidget);
 	wordPadDockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
 	this->addDockWidget(Qt::TopDockWidgetArea, wordPadDockWidget);
 	connect(this->wordPadWidget, SIGNAL(lostFocus(QLineEdit*)), this, SLOT(wordPadLostFocus(QLineEdit*)));
 
-	QDockWidget *kanaPadDockWidget = new QDockWidget(tr("Kana Pad"), this);
+	this->kanaPadDockWidget = new QDockWidget(tr("Kana Pad"), this);
 	kanaPadDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 	kanaPadDockWidget->setWidget(this->kanaPadWidget);
 	kanaPadDockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
@@ -58,6 +58,10 @@ MainW::MainW(QWidget *parent)
 	//connect(this->kanaPadWidget, SIGNAL(kanaClicked(QString,bool)), this, SLOT(kanaClickedSlot(QString,bool)));
 	//connect(this->wordPadWidget, SIGNAL(lostFocus(QLineEdit*)), this, SLOT(wordLostFocus(QLineEdit*)));
 #endif
+
+//	wordListDockWidget->hide();
+//	wordPadDockWidget->hide();
+//	kanaPadDockWidget->hide();
 
 }
 

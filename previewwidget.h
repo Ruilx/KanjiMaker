@@ -11,6 +11,9 @@ class PreviewWidget : public QWidget
 
 	QGroupBox *groupBox;
 
+	void resizeEvent(QResizeEvent *event);
+
+	QGraphicsTextItem *i;
 public:
 	explicit PreviewWidget(QWidget *parent = 0);
 	void setKana(QString kana);

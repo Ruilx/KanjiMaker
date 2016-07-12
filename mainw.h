@@ -13,8 +13,11 @@ class MainW : public QMainWindow
 {
 	Q_OBJECT
 	WordlistWidget *wordListWidget;
+	QDockWidget *wordListDockWidget;
 	WordPadWidget *wordPadWidget;
+	QDockWidget *wordPadDockWidget;
 	KanaPadWidget *kanaPadWidget;
+	QDockWidget *kanaPadDockWidget;
 	PreviewWidget *previewWidget;
 
 	QLineEdit *currentFocusWordPadLineEdit;

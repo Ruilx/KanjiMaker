@@ -11,9 +11,13 @@ class WordlistWidget : public QWidget
 
 	QGroupBox *groupBox;
 	ListWidget *wordList;
+	QPushButton *addButton;
+	QPushButton *removeButton;
+	QPushButton *upButton;
+	QPushButton *downButton;
 public:
 	explicit WordlistWidget(QWidget *parent = 0);
-
+	void update();
 signals:
 
 public slots:
