@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     wordpadwidget.cpp \
     kanapadwidget.cpp \
     com/kanapushbutton.cpp \
-    com/lineedit.cpp
+    com/lineedit.cpp \
+    previewwidget.cpp
 
 HEADERS  += mainw.h \
     wordlistwidget.h \
@@ -27,4 +28,5 @@ HEADERS  += mainw.h \
     wordpadwidget.h \
     kanapadwidget.h \
     com/kanapushbutton.h \
-    com/lineedit.h
+    com/lineedit.h \
+    previewwidget.h

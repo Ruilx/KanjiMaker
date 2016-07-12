@@ -7,6 +7,7 @@
 #include "wordlistwidget.h"
 #include "wordpadwidget.h"
 #include "kanapadwidget.h"
+#include "previewwidget.h"
 
 class MainW : public QMainWindow
 {
@@ -14,8 +15,15 @@ class MainW : public QMainWindow
 	WordlistWidget *wordListWidget;
 	WordPadWidget *wordPadWidget;
 	KanaPadWidget *kanaPadWidget;
+	PreviewWidget *previewWidget;
 
 	QLineEdit *currentFocusWordPadLineEdit;
+
+	QMenu *fileMenu;
+	QAction *newFileAct;
+	QAction *openFileAct;
+
+	void createMenus();
 public:
 	MainW(QWidget *parent = 0);
 	~MainW();

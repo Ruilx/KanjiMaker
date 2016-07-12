@@ -7,16 +7,31 @@ void KanaPadWidget::resizeEvent(QResizeEvent *event)
 
 KanaPadWidget::KanaPadWidget(QWidget *parent) : QWidget(parent)
 {
-	const QString hiragana[5] = {QString("あかがさざただなはばぱまやらわんぁー\nゃゎ"),
-								 QString("いきぎしじちぢにひびぴみ\nり\n\nぃ\n\n\n\n"),
-								 QString("うくぐすずつづぬふぶぷむゆる\n\nぅ\nっゅ "),
+	const QString hiragana[5] = {QString("あかがさざただなはばぱまやらわんぁ\n\nゃゎ"),
+								 QString("いきぎしじちぢにひびぴみ\nり\n\nぃー\n\n\n"),
+								 QString("うくぐすずつづぬふぶぷむゆる\n\nぅ\nっゅ\n"),
 								 QString("えけげせぜてでねへべぺめ\nれ\n\nぇ\n\n\n\n"),
 								 QString("おこごそぞとどのほぼぽもよろを\nぉ\n\nょ\n"),};
 	const QString katakana[5] = {QString("アカガサザタダナハバパマヤラワンァヵ\nャヮ"),
 								 QString("イキギシジチヂニヒビピミ\nリ\n\nィ\n\n\n\n"),
 								 QString("ウクグスズツヅヌフブプムユル\n\nゥ\nッュ\n"),
 								 QString("エケゲセゼテデネヘベペメ\nレ\n\nェヶ\n\n\n"),
-								 QString("オコゴソゾトドノホボポモヨロヲ\nォ\n\nェ\n"),};
+								 QString("オコゴソゾトドノホボポモヨロヲ\nォ\n\nョ\n"),};
+	const QString roman[5][21] = {{QString("a"), QString("ka"), QString("ga"), QString("sa"), QString("za"), QString("ta"), QString("da"),
+								   QString("na"), QString("ha"), QString("ba"), QString("pa"), QString("ma"), QString("ya"), QString("ra"),
+								   QString("wa"), QString("n"), QString("la"), QString("lka"), QString(""), QString("lya"), QString("lwa"),},
+								  {QString("i"), QString("ki"), QString("gi"), QString("shi"), QString("ji"), QString("chi"), QString("ji"),
+								   QString("ni"), QString("hi"), QString("bi"), QString("pi"), QString("mi"), QString(""), QString("ri"),
+								   QString(""), QString(""), QString("li"), QString("-"), QString(""), QString(""), QString(""),},
+								  {QString("u"), QString("ku"), QString("gu"), QString("su"), QString("zu"), QString("tsu"), QString("zu"),
+								   QString("nu"), QString("hu"), QString("bu"), QString("pu"), QString("mu"), QString("yu"), QString("ru"),
+								   QString(""), QString(""), QString("lu"), QString(""), QString("ltsu"), QString("lyu"), QString(""),},
+								  {QString("e"), QString("ke"), QString("ge"), QString("se"), QString("ze"), QString("te"), QString("de"),
+								   QString("ne"), QString("he"), QString("be"), QString("pe"), QString("me"), QString(""), QString("re"),
+								   QString(""), QString(""), QString("le"), QString(""), QString(""), QString(""), QString(""),},
+								  {QString("o"), QString("ko"), QString("go"), QString("so"), QString("zo"), QString("to"), QString("do"),
+								   QString("no"), QString("ho"), QString("bo"), QString("po"), QString("mo"), QString("yo"), QString("ro"),
+								   QString("wo"), QString(""), QString("lo"), QString(""), QString(""), QString("lyo"), QString(""),},};
 	const QString youon[5][11] = {{QString("きゃ"), QString("ぎゃ"), QString("しゃ"), QString("じゃ"), QString("ちゃ"), QString("にゃ"), QString("ひゃ"), QString("びゃ"), QString("ぴゃ"), QString("みゃ"), QString("りゃ")},
 								  {QString("きゅ"), QString("ぎゅ"), QString("しゅ"), QString("じゅ"), QString("ちゅ"), QString("にゅ"), QString("ひゅ"), QString("びゅ"), QString("ぴゅ"), QString("みゅ"), QString("りゅ")},
 								  {QString("きょ"), QString("ぎょ"), QString("しょ"), QString("じょ"), QString("ちょ"), QString("にょ"), QString("ひょ"), QString("びょ"), QString("ぴょ"), QString("みょ"), QString("りょ")},
@@ -48,6 +63,7 @@ KanaPadWidget::KanaPadWidget(QWidget *parent) : QWidget(parent)
 			}else{
 				connect(this->hiraganaPadButton[i][j], SIGNAL(clicked(QString,bool)), this, SLOT(kanaPadClicked(QString,bool)));
 				this->hiraganaPadButton[i][j]->setText(QString(kanaChar));
+				this->hiraganaPadButton[i][j]->setToolTip(roman[i][j]);
 			}
 			hiraganaLay->addWidget(this->hiraganaPadButton[i][j], i, j, 1, 1);
 		}
@@ -73,6 +89,7 @@ KanaPadWidget::KanaPadWidget(QWidget *parent) : QWidget(parent)
 			}else{
 				connect(this->katakanaPadButton[i][j], SIGNAL(clicked(QString,bool)), this, SLOT(kanaPadClicked(QString,bool)));
 				this->katakanaPadButton[i][j]->setText(QString(kanaChar));
+				this->katakanaPadButton[i][j]->setToolTip(roman[i][j]);
 			}
 			katakanaLay->addWidget(this->katakanaPadButton[i][j], i, j, 1, 1);
 		}
