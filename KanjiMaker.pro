@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     kanapadwidget.cpp \
     com/kanapushbutton.cpp \
     com/lineedit.cpp \
-    previewwidget.cpp
+    previewwidget.cpp \
+    core/readsavefile.cpp
 
 HEADERS  += mainw.h \
     wordlistwidget.h \
@@ -29,4 +30,6 @@ HEADERS  += mainw.h \
     kanapadwidget.h \
     com/kanapushbutton.h \
     com/lineedit.h \
-    previewwidget.h
+    previewwidget.h \
+    core/structure.h \
+    core/readsavefile.h

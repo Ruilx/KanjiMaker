@@ -3,6 +3,7 @@
 
 void PreviewWidget::resizeEvent(QResizeEvent *event)
 {
+	Q_UNUSED(event);
 //	qDebug() << "Widget: W:" << event->size().width() << "H:" << event->size().height();
 //	qDebug() << "Scene:  W:" << this->scene->width() << "H:" << this->scene->height();
 //	qDebug() << "View:   W:" << this->view->width() << "H:" << this->view->height();

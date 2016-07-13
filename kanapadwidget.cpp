@@ -13,7 +13,7 @@ KanaPadWidget::KanaPadWidget(QWidget *parent) : QWidget(parent)
 								 QString("えけげせぜてでねへべぺめ\nれ\n\nぇ\n\n\n\n"),
 								 QString("おこごそぞとどのほぼぽもよろを\nぉ\n\nょ\n"),};
 	const QString katakana[5] = {QString("アカガサザタダナハバパマヤラワンァヵ\nャヮ"),
-								 QString("イキギシジチヂニヒビピミ\nリ\n\nィ\n\n\n\n"),
+								 QString("イキギシジチヂニヒビピミ\nリ\n\nィー\n\n\n"),
 								 QString("ウクグスズツヅヌフブプムユル\n\nゥ\nッュ\n"),
 								 QString("エケゲセゼテデネヘベペメ\nレ\n\nェヶ\n\n\n"),
 								 QString("オコゴソゾトドノホボポモヨロヲ\nォ\n\nョ\n"),};
@@ -37,7 +37,11 @@ KanaPadWidget::KanaPadWidget(QWidget *parent) : QWidget(parent)
 								  {QString("きょ"), QString("ぎょ"), QString("しょ"), QString("じょ"), QString("ちょ"), QString("にょ"), QString("ひょ"), QString("びょ"), QString("ぴょ"), QString("みょ"), QString("りょ")},
 								  {QString("ウィ"), QString("ウェ"), QString("ウォ"), QString("シェ"), QString("チェ"), QString("ツァ"), QString("ツェ"), QString("ツォ"), QString("ティ"), QString("トゥ"), QString()},
 								  {QString("ファ"), QString("フィ"), QString("フェ"), QString("フォ"), QString("ジェ"), QString("ディ"), QString("ドゥ"), QString("デュ"), QString(), QString(), QString()},};
-
+	const QString youonRoman[5][11] = {{QString("kya"), QString("gya"), QString("sha"), QString("ja"), QString("cha"), QString("nya"), QString("hya"), QString("bya"), QString("pya"), QString("mya"), QString("rya")},
+									   {QString("kyu"), QString("gyu"), QString("shu"), QString("ju"), QString("chu"), QString("nyu"), QString("hyu"), QString("byu"), QString("pyu"), QString("myu"), QString("ryu")},
+									   {QString("kyo"), QString("gyo"), QString("sho"), QString("jo"), QString("cho"), QString("nyo"), QString("hyo"), QString("byo"), QString("pyo"), QString("myo"), QString("ryo")},
+									   {QString("wi"), QString("we"), QString("wo"), QString("she"), QString("che"), QString("tsa"), QString("tse"), QString("tso"), QString("ti"), QString("tu"), QString()},
+									   {QString("fa"), QString("fi"), QString("fe"), QString("fo"), QString("je"), QString("di"), QString("du"), QString("dyu"), QString(), QString(), QString()},};
 	this->setFixedHeight(195);
 	this->tabWidget = new QTabWidget(this);
 	QFont font;{
@@ -114,6 +118,7 @@ KanaPadWidget::KanaPadWidget(QWidget *parent) : QWidget(parent)
 			}else{
 				connect(this->youonPadButton[i][j], SIGNAL(clicked(QString,bool)), this, SLOT(kanaPadClicked(QString,bool)));
 				this->youonPadButton[i][j]->setText(youonChar);
+				this->youonPadButton[i][j]->setToolTip(youonRoman[i][j]);
 			}
 			youonLay->addWidget(this->youonPadButton[i][j], i, j, 1, 1);
 		}

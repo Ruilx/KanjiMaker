@@ -8,10 +8,21 @@
 #include "wordpadwidget.h"
 #include "kanapadwidget.h"
 #include "previewwidget.h"
+#include "core/structure.h"
+#include "core/readsavefile.h"
 
 class MainW : public QMainWindow
 {
 	Q_OBJECT
+	enum Statement{
+		FileNotOpen = 0x01,
+		FileOpen = 0x02,
+		FileModified = 0x04,
+		WordEditted = 0x08,
+		WordModified = WordEditted | FileModified,
+	};
+	Statement statement;
+
 	WordlistWidget *wordListWidget;
 	QDockWidget *wordListDockWidget;
 	WordPadWidget *wordPadWidget;
@@ -25,6 +36,15 @@ class MainW : public QMainWindow
 	QMenu *fileMenu;
 	QAction *newFileAct;
 	QAction *openFileAct;
+	QAction *saveFileAct;
+
+	QMenu *windowMenu;
+	QAction *wordListWindowAct;
+	QAction *wordPadWindowAct;
+	QAction *kanaPadWindowAct;
+
+	QList<KanjiWord> word;
+	Head head;
 
 	void createMenus();
 public:
@@ -38,6 +58,25 @@ private slots:
 	void kanaClickedSlot(QString kana, bool e);
 	void wordLostFocus(QLineEdit *w);
 #endif
+	void newFileSlot();
+	bool openFileSlot();
+	bool saveFileSlot();
+
+private slots:
+	void fileNotOpenStatement();
+	void fileOpenStatement();
+	void fileModifiedStatement();
+	void wordModifiedStatement();
+
+	void wordListClicked(int index);
+	void wordListRemoved(int index);
+	void wordListMovedUp(int index);
+	void wordListMovedDown(int index);
+	void wordListDraged(int from, int to);
+
+	void saveToList();
+
+
 };
 
 #endif // MAINW_H

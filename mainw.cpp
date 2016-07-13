@@ -4,12 +4,36 @@ void MainW::createMenus()
 {
 	this->fileMenu = new QMenu(tr("File"), this);
 	this->newFileAct = new QAction(tr("New File"), this);
+	this->newFileAct->setShortcut(QKeySequence(QKeySequence::New));
 	this->fileMenu->addAction(this->newFileAct);
 
 	this->openFileAct = new QAction(tr("Open File"), this);
+	this->openFileAct->setShortcut(QKeySequence(QKeySequence::Open));
 	this->fileMenu->addAction(this->openFileAct);
 
+	this->saveFileAct = new QAction(tr("Save"), this);
+	this->saveFileAct->setShortcut(QKeySequence(QKeySequence::Save));
+	this->fileMenu->addAction(this->saveFileAct);
+
 	this->menuBar()->addMenu(this->fileMenu);
+
+	this->windowMenu = new QMenu(tr("Window"), this);
+	this->wordListWindowAct = new QAction(tr("Word List"), this);
+	this->wordListWindowAct->setShortcut(QKeySequence("Alt+L"));
+	this->wordListWindowAct->setCheckable(true);
+	this->windowMenu->addAction(this->wordListWindowAct);
+
+	this->wordPadWindowAct = new QAction(tr("Word Pad"), this);
+	this->wordPadWindowAct->setShortcut(QKeySequence("Alt+W"));
+	this->wordPadWindowAct->setCheckable(true);
+	this->windowMenu->addAction(this->wordPadWindowAct);
+
+	this->kanaPadWindowAct = new QAction(tr("Kana Pad"), this);
+	this->kanaPadWindowAct->setShortcut(QKeySequence("Alt+K"));
+	this->kanaPadWindowAct->setCheckable(true);
+	this->windowMenu->addAction(this->kanaPadWindowAct);
+
+	this->menuBar()->addMenu(this->windowMenu);
 }
 
 MainW::MainW(QWidget *parent)
@@ -59,10 +83,17 @@ MainW::MainW(QWidget *parent)
 	//connect(this->wordPadWidget, SIGNAL(lostFocus(QLineEdit*)), this, SLOT(wordLostFocus(QLineEdit*)));
 #endif
 
-//	wordListDockWidget->hide();
-//	wordPadDockWidget->hide();
-//	kanaPadDockWidget->hide();
+	this->fileNotOpenStatement();
 
+	this->wordListWidget->clearList();
+
+	connect(this->wordListWidget, SIGNAL(clicked(int)), this, SLOT(wordListClicked(int)));
+	connect(this->wordListWidget, SIGNAL(removed(int)), this, SLOT(wordListRemoved(int)));
+	connect(this->wordListWidget, SIGNAL(movedUp(int)), this, SLOT(wordListMovedUp(int)));
+	connect(this->wordListWidget, SIGNAL(movedDown(int)), this, SLOT(wordListMovedDown(int)));
+	connect(this->wordListWidget, SIGNAL(draged(int,int)), this, SLOT(wordListDraged(int,int)));
+
+	connect(this->wordPadWidget, SIGNAL(saveButtonClicked()), this, SLOT(saveToList()));
 }
 
 MainW::~MainW()
@@ -96,3 +127,201 @@ void MainW::wordLostFocus(QLineEdit *w)
 	QMessageBox::information(this, "WordPad Lost Focus in Main", QString("QLineEdit's Text:%1").arg(w->text()), QMessageBox::Ok);
 }
 #endif
+
+void MainW::newFileSlot()
+{
+	if(this->statement & FileModified){
+		int cancelled = 0;
+		int result = QMessageBox::question(this, "Kanji Maker", tr("You have modified the project, are you really want to create new file?"), QMessageBox::Yes | QMessageBox::Save | QMessageBox::Cancel);
+		switch(result){
+			case QMessageBox::Yes:
+			case QMessageBox::Discard: cancelled = 0; break;
+			case QMessageBox::Save:
+				//save file
+				{
+					bool isSaved = this->saveFileSlot();
+					if(isSaved == false){
+						cancelled = 1;
+					}
+				}
+				break;
+			case QMessageBox::No:
+			case QMessageBox::Cancel: cancelled = 1; break;
+		}
+		if(cancelled == 1){
+			return;
+		}
+	}
+	QString headName = QInputDialog::getText(this, tr("Kanji Maker"), tr("Please enter this project's name:"));
+	if(headName.isEmpty()){
+		QMessageBox::warning(this, "Kanji Maker", tr("Please enter an name for this project."), QMessageBox::Ok);
+		return;
+	}
+	this->head.name.clear();
+	this->word.clear();
+	this->wordListWidget->clearList();
+	this->fileOpenStatement();
+
+
+}
+
+bool MainW::openFileSlot()
+{
+	if(this->statement & FileModified){
+		int cancelled = 0;
+		int result = QMessageBox::question(this,  "Kanji Maker", tr("You have modified the project, are you really want to open file?"), QMessageBox::Yes | QMessageBox::Save | QMessageBox::Cancel);
+		switch(result){
+			case QMessageBox::Yes:
+			case QMessageBox::Discard: cancelled = 0; break;
+			case QMessageBox::Save:
+				//save file
+				{
+					bool isSaved = this->saveFileSlot();
+					if(isSaved == false){
+						cancelled = 1;
+					}
+				}
+				break;
+			case QMessageBox::No:
+			case QMessageBox::Cancel: cancelled = 1; break;
+		}
+		if(cancelled == 1){
+			return false;
+		}
+	}
+	this->head.name.clear();
+	this->word.clear();
+	this->wordListWidget->clearList();
+	QString filename = QFileDialog::getOpenFileName(this, "Open Word File", QDir::currentPath(), "Kanji Word File(*kji);;Kanji Json File(*json);;All Files(*.*)");
+	if(filename.isEmpty()){
+		return false;
+	}
+	ReadSaveFile readFile(filename);
+	if(!readFile.loadFile(&this->word, &this->head)){
+		QMessageBox::critical(this, "Kanji Maker", "This file is not vaild.", QMessageBox::Ok);
+		return false;
+	}
+	this->fileOpenStatement();
+	this->wordListWidget->setHead(this->head);
+	this->wordListWidget->setList(this->word);
+	return true;
+}
+
+bool MainW::saveFileSlot()
+{
+	if(this->word.isEmpty()){
+		QMessageBox::information(this, "Kanji Maker", "Your word list is empty...", QMessageBox::Ok);
+		return false;
+	}
+	if(this->statement & FileModified){
+		QString filename = QFileDialog::getSaveFileName(this, "Save Word File", QDir::currentPath(), "Kanji Word File(*kji);;Kanji Json File(*json);;All Files(*.*)");
+		ReadSaveFile saveFile(filename);
+		if(!saveFile.saveFile(this->word, this->head)){
+			QMessageBox::critical(this, "Kanji Maker", "Save Failed...", QMessageBox::Ok);
+			return false;
+		}else{
+			QMessageBox::information(this, "Kanji Maker", "Word File Saved.", QMessageBox::Ok);
+			this->fileOpenStatement();
+			return true;
+		}
+	}
+}
+
+void MainW::fileNotOpenStatement()
+{
+	this->saveFileAct->setEnabled(false);
+	this->wordListDockWidget->hide();
+	this->wordListWindowAct->setChecked(false);
+	this->wordPadDockWidget->hide();
+	this->wordPadWindowAct->setChecked(false);
+	this->kanaPadDockWidget->hide();
+	this->kanaPadWindowAct->setChecked(false);
+	this->statement = FileNotOpen;
+}
+
+void MainW::fileOpenStatement()
+{
+	this->saveFileAct->setEnabled(false);
+	this->wordListDockWidget->show();
+	this->wordListWindowAct->setChecked(true);
+	this->wordPadDockWidget->hide();
+	this->wordPadWindowAct->setChecked(false);
+	this->kanaPadDockWidget->show();
+	this->kanaPadWindowAct->setChecked(true);
+	this->statement = FileOpen;
+}
+
+void MainW::fileModifiedStatement()
+{
+	this->saveFileAct->setEnabled(true);
+	this->statement = FileModified;
+}
+
+void MainW::wordModifiedStatement(){
+	this->wordPadDockWidget->show();
+	this->statement = WordModified;
+}
+
+void MainW::wordListClicked(int index)
+{
+	if(index >= this->word.length()){
+		qDebug() << "Word List: index:" << index << "not found, will update word list.";
+		this->wordListWidget->setList(this->word);
+		return;
+	}
+	KanjiWord w = this->word.at(index);
+	this->wordPadWidget->setKana(w.kana);
+	this->wordPadWidget->setKanji(w.kanji);
+	this->wordPadWidget->setChinese(w.chinese);
+	this->wordPadWidget->setEnglish(w.english);
+
+}
+
+void MainW::wordListRemoved(int index)
+{
+	if(index >= this->word.length()){
+		qDebug() << "Word List: index:" << index << "not found, will update word list.";
+		this->wordListWidget->setList(this->word);
+		return;
+	}
+	KanjiWord w = this->word.at(index);
+	if(w.kana == this->wordPadWidget->getKana()){
+		qDebug() << "Kanji Word: Kana:" << w.kana << "is not same to" << this->wordPadWidget->getKana();
+		return;
+	}
+	if(w.kanji == this->wordPadWidget->getKanji()){
+		qDebug() << "Kanji Word: Kanji:" << w.kanji << "is not same to" << this->wordPadWidget->getKanji();
+		return;
+	}
+	if(w.chinese == this->wordPadWidget->getChinese()){
+		qDebug() << "Kanji Word: Chinese:" << w.chinese << "is not same to" << this->wordPadWidget->getChinese();
+		return;
+	}
+	if(w.english == this->wordPadWidget->getEnglish()){
+		qDebug() << "Kanji Word: English:" << w.english << "is not same to" << this->wordPadWidget->getEnglish();
+		return;
+	}
+	this->word.takeAt(index);
+
+	this->wordListWidget->setList(this->word);
+}
+
+void MainW::wordListMovedUp(int index)
+{
+
+}
+
+void MainW::wordListMovedDown(int index)
+{
+
+}
+
+void MainW::wordListDraged(int from, int to)
+{
+
+}
+
+void MainW::saveToList()
+{
+
+}

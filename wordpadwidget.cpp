@@ -70,6 +70,46 @@ WordPadWidget::WordPadWidget(QWidget *parent) : QWidget(parent)
 
 }
 
+void WordPadWidget::setKana(const QString &kana)
+{
+	this->kanaEdit->setText(kana);
+}
+
+void WordPadWidget::setKanji(const QString &kanji)
+{
+	this->kanjiEdit->setText(kanji);
+}
+
+void WordPadWidget::setChinese(const QString &chinese)
+{
+	this->chineseEdit->setText(chinese);
+}
+
+void WordPadWidget::setEnglish(const QString &english)
+{
+	this->englishEdit->setText(english);
+}
+
+QString WordPadWidget::getKana() const
+{
+	return this->kanaEdit->text();
+}
+
+QString WordPadWidget::getKanji() const
+{
+	return this->kanjiEdit->text();
+}
+
+QString WordPadWidget::getChinese() const
+{
+	return this->chineseEdit->text();
+}
+
+QString WordPadWidget::getEnglish() const
+{
+	return this->englishEdit->text();
+}
+
 bool WordPadWidget::eventFilter(QObject *watched, QEvent *event)
 {
 	if(watched == this->kanaEdit){

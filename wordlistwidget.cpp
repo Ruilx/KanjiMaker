@@ -4,7 +4,7 @@ WordlistWidget::WordlistWidget(QWidget *parent) : QWidget(parent)
 {
 	this->setMaximumWidth(200);
 	this->setBaseSize(300, this->height());
-	this->groupBox = new QGroupBox("Lesson", this);
+	this->groupBox = new QGroupBox("", this);
 	this->wordList = new ListWidget(this);
 	this->addButton = new QPushButton("+", this);
 	this->addButton->setToolTip(tr("Add"));
@@ -32,9 +32,87 @@ WordlistWidget::WordlistWidget(QWidget *parent) : QWidget(parent)
 	this->setLayout(mainLay);
 
 	mainLay->addWidget(this->groupBox);
+
+	connect(this->wordList, SIGNAL(mouseClicked()), this, SLOT(update()));
+	update();
+
 }
 
 void WordlistWidget::update()
+{
+	if(this->wordList->count() == 0){
+		this->removeButton->setEnabled(false);
+		this->upButton->setEnabled(false);
+		this->downButton->setEnabled(false);
+	}else{
+		if(this->wordList->isSelected()){
+			if(this->wordList->currentRow() != -1){
+				if(this->wordList->currentRow() <= 0){
+					this->addButton->setEnabled(true);
+					this->removeButton->setEnabled(true);
+					this->upButton->setEnabled(false);
+					this->downButton->setEnabled(true);
+				}else if(this->wordList->currentRow() >= this->wordList->count() -1){
+					this->addButton->setEnabled(true);
+					this->removeButton->setEnabled(true);
+					this->upButton->setEnabled(true);
+					this->downButton->setEnabled(false);
+				}else{
+					this->addButton->setEnabled(true);
+					this->removeButton->setEnabled(true);
+					this->upButton->setEnabled(true);
+					this->downButton->setEnabled(true);
+				}
+			}else{
+				return;
+			}
+		}else{
+			this->addButton->setEnabled(true);
+			this->removeButton->setEnabled(false);
+			this->upButton->setEnabled(false);
+			this->downButton->setEnabled(false);
+		}
+	}
+}
+
+void WordlistWidget::clearList()
+{
+	this->wordList->clear();
+	this->update();
+}
+
+void WordlistWidget::setList(const QList<KanjiWord> &word)
+{
+	foreach(KanjiWord w, word){
+		this->wordList->addItem(w.kanji);
+	}
+}
+
+void WordlistWidget::setHead(const Head &head)
+{
+	QString nameHere = head.name;
+	if(nameHere.length() > 15){
+		nameHere = nameHere.left(15).append("...");
+	}
+	this->groupBox->setTitle(nameHere);
+}
+
+void WordlistWidget::addSlot()
+{
+
+}
+
+void WordlistWidget::removeSlot()
+{
+
+}
+
+void WordlistWidget::moveUpSlot()
+{
+
+}
+
+void WordlistWidget::moveDownSlot()
 {
 
 }
