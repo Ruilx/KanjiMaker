@@ -101,8 +101,11 @@ MainW::MainW(QWidget *parent)
 	connect(this->wordListWidget, SIGNAL(movedUp(int)), this, SLOT(wordListMovedUp(int)));
 	connect(this->wordListWidget, SIGNAL(movedDown(int)), this, SLOT(wordListMovedDown(int)));
 	connect(this->wordListWidget, SIGNAL(draged(int,int)), this, SLOT(wordListDraged(int,int)));
+	connect(this->wordListWidget, SIGNAL(add(int)), this, SLOT(wordListAdded(int)));
+	connect(this->wordListWidget, SIGNAL(listEmpty()), this, SLOT(wordListEmpty()));
 
 	connect(this->wordPadWidget, SIGNAL(saveButtonClicked()), this, SLOT(saveToList()));
+	connect(this->wordPadWidget, SIGNAL(textChangedSig(QString)), this->previewWidget, SLOT(setKanjiSlot(QString)));
 }
 
 MainW::~MainW()
@@ -166,9 +169,13 @@ void MainW::newFileSlot()
 		QMessageBox::warning(this, "Kanji Maker", tr("Please enter an name for this project."), QMessageBox::Ok);
 		return;
 	}
-	this->head.name.clear();
+	this->head.name = headName;
 	this->word.clear();
 	this->wordListWidget->clearList();
+	this->wordListWidget->setList(this->word);
+	this->wordListWidget->setHead(this->head);
+	this->previewWidget->setFontSize(30);
+	this->previewWidget->setKanji(tr("新しいエントリの左のリストをクリックします"));
 	this->fileOpenStatement();
 }
 
@@ -199,7 +206,7 @@ bool MainW::openFileSlot()
 	this->head.name.clear();
 	this->word.clear();
 	this->wordListWidget->clearList();
-	QString filename = QFileDialog::getOpenFileName(this, "Open Word File", QDir::currentPath(), "Kanji Word File(*kji);;Kanji Json File(*json);;All Files(*.*)");
+	QString filename = QFileDialog::getOpenFileName(this, "Open Word File", QDir::currentPath(), "Kanji Word File(*.kji);;Kanji Json File(*.json);;All Files(*.*)");
 	if(filename.isEmpty()){
 		return false;
 	}
@@ -211,6 +218,8 @@ bool MainW::openFileSlot()
 	this->fileOpenStatement();
 	this->wordListWidget->setHead(this->head);
 	this->wordListWidget->setList(this->word);
+	this->previewWidget->setFontSize(30);
+	this->previewWidget->setKanji(tr("エントリを表示するには、左側のをクリックして"));
 	return true;
 }
 
@@ -221,7 +230,7 @@ bool MainW::saveFileSlot()
 		return false;
 	}
 	if(this->statement & FileModified){
-		QString filename = QFileDialog::getSaveFileName(this, "Save Word File", QDir::currentPath(), "Kanji Word File(*kji);;Kanji Json File(*json);;All Files(*.*)");
+		QString filename = QFileDialog::getSaveFileName(this, "Save Word File", QDir::currentPath(), "Kanji Word File(*.kji);;Kanji Json File(*.json);;All Files(*.*)");
 		ReadSaveFile saveFile(filename);
 		if(!saveFile.saveFile(this->word, this->head)){
 			QMessageBox::critical(this, "Kanji Maker", "Save Failed...", QMessageBox::Ok);
@@ -312,11 +321,13 @@ void MainW::fileModifiedStatement()
 
 void MainW::wordModifiedStatement(){
 	this->wordPadDockWidget->show();
+	this->saveFileAct->setEnabled(true);
 	this->statement = WordModified;
 }
 
 void MainW::wordListClicked(int index)
 {
+	qDebug() << "[DEBUG]MainW::wordListClicked word[" << index << "]";
 	if(index >= this->word.length()){
 		qDebug() << "Word List: index:" << index << "not found, will update word list.";
 		this->wordListWidget->setList(this->word);
@@ -327,54 +338,126 @@ void MainW::wordListClicked(int index)
 	this->wordPadWidget->setKanji(w.kanji);
 	this->wordPadWidget->setChinese(w.chinese);
 	this->wordPadWidget->setEnglish(w.english);
-
+	this->previewWidget->setFontSize(40);
+	this->previewWidget->setKana(w.kana);
+	this->previewWidget->setKanji(w.kanji);
+	this->wordPadDockWidget->show();
+	this->wordPadWindowAct->setChecked(true);
+	this->currentWordIndex = index;
 }
 
 void MainW::wordListRemoved(int index)
 {
+	qDebug() << "[DEBUG]MainW::wordListRemoved word[" << index << "]";
 	if(index >= this->word.length()){
 		qDebug() << "Word List: index:" << index << "not found, will update word list.";
 		this->wordListWidget->setList(this->word);
 		return;
 	}
 	KanjiWord w = this->word.at(index);
-	if(w.kana == this->wordPadWidget->getKana()){
+	if(w.kana != this->wordPadWidget->getKana()){
 		qDebug() << "Kanji Word: Kana:" << w.kana << "is not same to" << this->wordPadWidget->getKana();
 		return;
 	}
-	if(w.kanji == this->wordPadWidget->getKanji()){
+	if(w.kanji != this->wordPadWidget->getKanji()){
 		qDebug() << "Kanji Word: Kanji:" << w.kanji << "is not same to" << this->wordPadWidget->getKanji();
 		return;
 	}
-	if(w.chinese == this->wordPadWidget->getChinese()){
+	if(w.chinese != this->wordPadWidget->getChinese()){
 		qDebug() << "Kanji Word: Chinese:" << w.chinese << "is not same to" << this->wordPadWidget->getChinese();
 		return;
 	}
-	if(w.english == this->wordPadWidget->getEnglish()){
+	if(w.english != this->wordPadWidget->getEnglish()){
 		qDebug() << "Kanji Word: English:" << w.english << "is not same to" << this->wordPadWidget->getEnglish();
 		return;
 	}
-	this->word.takeAt(index);
+	this->word.removeAt(index);
 
 	this->wordListWidget->setList(this->word);
 }
 
 void MainW::wordListMovedUp(int index)
 {
-
+	qDebug() << "[DEBUG]MainW::wordListMovedUp word[" << index << "]";
+	if(index >= this->word.length()){
+		qDebug() << "Word List: index:" << index << "not found, will update word list.";
+		this->wordListWidget->setList(this->word);
+		return;
+	}
+	if(index == 0){
+		qDebug() << "Word List: index:" << index << "is the first one. cannot move up.";
+		return;
+	}
+	this->word.swap(index, index -1);
+	this->wordListWidget->setList(this->word);
 }
 
 void MainW::wordListMovedDown(int index)
 {
-
+	qDebug() << "[DEBUG]MainW::wordListMovedDown word[" << index << "]";
+	if(index >= this->word.length()){
+		qDebug() << "Word List: index:" << index << "not found, will update word list.";
+		this->wordListWidget->setList(this->word);
+		return;
+	}
+	if(index == this->word.length() -1){
+		qDebug() << "Word List: index:" << index << "is the last one. cannot move down.";
+		return;
+	}
+	this->word.swap(index, index +1);
+	this->wordListWidget->setList(this->word);
 }
 
 void MainW::wordListDraged(int from, int to)
 {
+	qDebug() << "[DEBUG]MainW::wordListDraged word[" << from << "] swapped with [" << to << "].";
+	if(from >= this->word.length() || to >= this->word.length()){
+		qDebug() << "Word List: index:" << from << "and:" << to << "not found, will update word list.";
+		this->wordListWidget->setList(this->word);
+		return;
+	}
+	this->word.swap(from, to);
+	this->wordListWidget->setList(this->word);
+}
 
+void MainW::wordListAdded(int index)
+{
+	qDebug() << "[DEBUG]MainW::wordListAdded word[" << index << "]";
+	KanjiWord w;
+	if(index >= this->word.length()){
+		this->word.append(w);
+		this->wordListWidget->setList(this->word);
+	}else{
+		this->word.insert(index, w);
+		this->wordListWidget->setList(this->word);
+	}
+}
+
+void MainW::wordListEmpty()
+{
+	this->currentWordIndex = -1;
+	this->wordPadWidget->setKana("");
+	this->wordPadWidget->setKanji("");
+	this->wordPadWidget->setChinese("");
+	this->wordPadWidget->setEnglish("");
+	this->previewWidget->setKana("");
+	this->previewWidget->setKanji(tr("リストは空です"));
+	this->wordPadDockWidget->hide();
+	this->wordPadWindowAct->setChecked(false);
+	this->kanaPadDockWidget->hide();
+	this->kanaPadWindowAct->setChecked(false);
 }
 
 void MainW::saveToList()
 {
-
+	qDebug() << "[DEBUG]MainW::saveToList word[" << this->currentWordIndex << "]";
+	if(this->currentWordIndex == -1){
+		return;
+	}
+	this->word[this->currentWordIndex].kana = this->wordPadWidget->getKana();
+	this->word[this->currentWordIndex].kanji = this->wordPadWidget->getKanji();
+	this->word[this->currentWordIndex].chinese = this->wordPadWidget->getChinese();
+	this->word[this->currentWordIndex].english = this->wordPadWidget->getEnglish();
+	this->wordListWidget->setList(this->word);
+	this->wordModifiedStatement();
 }

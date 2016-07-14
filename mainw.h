@@ -43,6 +43,7 @@ class MainW : public QMainWindow
 	QAction *wordPadWindowAct;
 	QAction *kanaPadWindowAct;
 
+	int currentWordIndex;
 	QList<KanjiWord> word;
 	Head head;
 
@@ -80,6 +81,8 @@ private slots:
 	void wordListMovedUp(int index);
 	void wordListMovedDown(int index);
 	void wordListDraged(int from, int to);
+	void wordListAdded(int index);
+	void wordListEmpty();
 
 	void saveToList();
 

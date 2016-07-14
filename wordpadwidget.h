@@ -34,11 +34,14 @@ public:
 signals:
 	void lostFocus(QLineEdit *w);
 	void saveButtonClicked();
+	void textChangedSig(QString str);
 
 	void hideSig();
 public slots:
 	bool eventFilter(QObject *watched, QEvent *event);
+	void textChangedSlot(QString str);
 private slots:
+	void saveButtonSlot();
 };
 
 #endif // WORDPADWIDGET_H

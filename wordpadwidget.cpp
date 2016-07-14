@@ -74,6 +74,9 @@ WordPadWidget::WordPadWidget(QWidget *parent) : QWidget(parent)
 	mainLay->addWidget(this->englishEdit, 3, 1, 1, 1);
 	mainLay->addWidget(this->saveButton, 4, 0, 1, 2, Qt::AlignRight);
 
+	connect(this->saveButton, SIGNAL(clicked(bool)), this, SLOT(saveButtonSlot()));
+	connect(this->kanjiEdit, SIGNAL(textChanged(QString)), this, SLOT(textChangedSlot(QString)));
+
 }
 
 void WordPadWidget::setKana(const QString &kana)
@@ -143,4 +146,14 @@ bool WordPadWidget::eventFilter(QObject *watched, QEvent *event)
 	}
 
 	return QWidget::eventFilter(watched,event);
+}
+
+void WordPadWidget::textChangedSlot(QString str)
+{
+	emit this->textChangedSig(str);
+}
+
+void WordPadWidget::saveButtonSlot()
+{
+	emit this->saveButtonClicked();
 }

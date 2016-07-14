@@ -59,15 +59,30 @@ PreviewWidget::PreviewWidget(QWidget *parent) : QWidget(parent)
 
 }
 
-void PreviewWidget::setKana(QString kana)
+void PreviewWidget::setKana(const QString &kana)
 {
 	Q_UNUSED(kana);
+	//TODO: this function will fill after fix the preview widget scale problem.
 }
 
-void PreviewWidget::setKanji(QString kanji)
+void PreviewWidget::setKanji(const QString &kanji)
 {
 	this->i->setPlainText(kanji);
 	QFont font = this->i->font();
-	font.setPixelSize(40);
+	//font.setPixelSize(40);
 	this->i->setFont(font);
+	this->i->setPos((this->view->size().width() - this->i->boundingRect().width()) * 0.5f,
+					(this->view->size().height() - this->i->boundingRect().height()) * 0.5f);
+}
+
+void PreviewWidget::setFontSize(int pixelSize)
+{
+	QFont fnt = this->i->font();
+	fnt.setPixelSize(pixelSize);
+	this->i->setFont(fnt);
+}
+
+void PreviewWidget::setKanjiSlot(QString kanji)
+{
+	this->setKanji(kanji);
 }

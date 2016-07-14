@@ -16,11 +16,13 @@ class PreviewWidget : public QWidget
 	QGraphicsTextItem *i;
 public:
 	explicit PreviewWidget(QWidget *parent = 0);
-	void setKana(QString kana);
-	void setKanji(QString kanji);
+	void setKana(const QString &kana);
+	void setKanji(const QString &kanji);
+	void setFontSize(int pixelSize);
 
 signals:
 public slots:
+	void setKanjiSlot(QString kanji);
 };
 
 #endif // PREVIEWWIDGET_H

@@ -12,7 +12,11 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *)
 	}else{
 		this->setCurrentItem(this->itemAt(currentMousePos));
 		this->removeAct->setEnabled(true);
-		if(this->currentRow() <= 0){
+		if(this->count() == 1){
+			//只有一个项目
+			this->moveUpwardAct->setEnabled(false);
+			this->moveDownwardAct->setEnabled(false);
+		}else if(this->currentRow() <= 0){
 			//选择了第一个项目
 			this->moveUpwardAct->setEnabled(false);
 			this->moveDownwardAct->setEnabled(true);
@@ -36,23 +40,25 @@ void ListWidget::dropEvent(QDropEvent *event)
 	QListWidget::dropEvent(event);
 	int destRow = this->row(this->itemAt(event->pos()));
 	this->setCurrentRow(destRow);
-	emit this->mouseClicked();
-	emit this->dropd(currentRow, destRow);
-
+	emit this->mouseClicked(destRow);
+	emit this->draged(currentRow, destRow);
 }
 
 void ListWidget::mousePressEvent(QMouseEvent *event)
 {
+	int index = -1;
 	if(this->itemAt(event->x(), event->y()) == nullptr){
 		//鼠标按下的地方没有项目
 		this->selected = false;
 		this->clearSelection();
+		index = -1;
 	}else{
 		//反之
 		this->selected = true;
+		index = this->currentRow();
 	}
 	QListWidget::mousePressEvent(event);
-	emit mouseClicked();
+	emit mouseClicked(index);
 }
 
 ListWidget::ListWidget(QWidget *parent): QListWidget(parent)
@@ -71,6 +77,10 @@ ListWidget::ListWidget(QWidget *parent): QListWidget(parent)
 	this->popMenu->addAction(this->moveDownwardAct);
 
 	//connect(this, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemSelected()));
+	connect(this->insertAct, SIGNAL(triggered(bool)), this, SLOT(insertSlot()));
+	connect(this->removeAct, SIGNAL(triggered(bool)), this, SLOT(removeSlot()));
+	connect(this->moveUpwardAct, SIGNAL(triggered(bool)), this, SLOT(moveUpSlot()));
+	connect(this->moveDownwardAct, SIGNAL(triggered(bool)), this, SLOT(moveDownSlot()));
 }
 
 bool ListWidget::isSelected()
@@ -80,20 +90,20 @@ bool ListWidget::isSelected()
 
 void ListWidget::insertSlot()
 {
-	emit this->insert();
+	emit this->insert(this->currentRow());
 }
 
 void ListWidget::removeSlot()
 {
-	emit this->remove();
+	emit this->remove(this->currentRow());
 }
 
 void ListWidget::moveUpSlot()
 {
-	emit this->moveUp();
+	emit this->moveUp(this->currentRow());
 }
 
 void ListWidget::moveDownSlot()
 {
-	emit this->moveDown();
+	emit this->moveDown(this->currentRow());
 }

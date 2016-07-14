@@ -39,9 +39,21 @@ WordlistWidget::WordlistWidget(QWidget *parent) : QWidget(parent)
 
 	mainLay->addWidget(this->groupBox);
 
-	connect(this->wordList, SIGNAL(mouseClicked()), this, SLOT(update()));
+	connect(this->wordList, SIGNAL(mouseClicked(int)), this, SLOT(update()));
 	update();
 
+	connect(this->addButton, SIGNAL(clicked(bool)), this, SLOT(addSlot()));
+	connect(this->removeButton, SIGNAL(clicked(bool)), this, SLOT(removeSlot()));
+	connect(this->upButton, SIGNAL(clicked(bool)), this, SLOT(moveUpSlot()));
+	connect(this->downButton, SIGNAL(clicked(bool)), this, SLOT(moveDownSlot()));
+
+	connect(this->wordList, SIGNAL(insert(int)), this, SLOT(popInsertSlot(int)));
+	connect(this->wordList, SIGNAL(remove(int)), this, SLOT(popRemoveSlot(int)));
+	connect(this->wordList, SIGNAL(moveUp(int)), this, SLOT(popMoveUpSlot(int)));
+	connect(this->wordList, SIGNAL(moveDown(int)), this, SLOT(popMoveDoenSlot(int)));
+	connect(this->wordList, SIGNAL(draged(int,int)), this, SLOT(dragedSlot(int, int)));
+	//connect(this->wordList, SIGNAL(mouseClicked(int)), this, SLOT(mouseClickedSlot(int)));
+	connect(this->wordList, SIGNAL(currentRowChanged(int)), this, SLOT(mouseClickedSlot(int)));
 }
 
 void WordlistWidget::update()
@@ -53,7 +65,12 @@ void WordlistWidget::update()
 	}else{
 		if(this->wordList->isSelected()){
 			if(this->wordList->currentRow() != -1){
-				if(this->wordList->currentRow() <= 0){
+				if(this->wordList->count() == 1){
+					this->addButton->setEnabled(true);
+					this->removeButton->setEnabled(true);
+					this->upButton->setEnabled(false);
+					this->downButton->setEnabled(false);
+				}else if(this->wordList->currentRow() <= 0){
 					this->addButton->setEnabled(true);
 					this->removeButton->setEnabled(true);
 					this->upButton->setEnabled(false);
@@ -85,13 +102,20 @@ void WordlistWidget::clearList()
 {
 	this->wordList->clear();
 	this->update();
+	emit this->listEmpty();
 }
 
 void WordlistWidget::setList(const QList<KanjiWord> &word)
 {
+	this->wordList->clear();
 	foreach(KanjiWord w, word){
-		this->wordList->addItem(w.kanji);
+		if(w.kanji.isEmpty()){
+			this->wordList->addItem(tr("名前しない"));
+		}else{
+			this->wordList->addItem(w.kanji);
+		}
 	}
+	this->update();
 }
 
 void WordlistWidget::setHead(const Head &head)
@@ -105,20 +129,78 @@ void WordlistWidget::setHead(const Head &head)
 
 void WordlistWidget::addSlot()
 {
-
+	emit this->add(this->wordList->count());
 }
 
 void WordlistWidget::removeSlot()
 {
-
+	if(this->wordList->isSelected()){
+		emit this->removed(this->wordList->currentRow());
+	}
+	if(this->wordList->count() == 0){
+		emit this->listEmpty();
+	}
 }
 
 void WordlistWidget::moveUpSlot()
 {
-
+	if(this->wordList->isSelected()){
+		int currentRow = this->wordList->currentRow();
+		emit this->movedUp(currentRow);
+		this->wordList->setCurrentRow(currentRow -1);
+		this->update();
+	}
 }
 
 void WordlistWidget::moveDownSlot()
 {
+	if(this->wordList->isSelected()){
+		int currentRow = this->wordList->currentRow();
+		emit this->movedDown(currentRow);
+		this->wordList->setCurrentRow(currentRow +1);
+		this->update();
+	}
 
+}
+
+void WordlistWidget::popInsertSlot(int index)
+{
+	if(this->wordList->isSelected()){
+		emit this->add(index);
+	}
+}
+
+void WordlistWidget::popRemoveSlot(int index)
+{
+	if(this->wordList->isSelected()){
+		emit this->removed(index);
+	}
+}
+
+void WordlistWidget::popMoveUpSlot(int index)
+{
+	if(this->wordList->isSelected()){
+		emit this->movedUp(index);
+	}
+}
+
+void WordlistWidget::popMoveDoenSlot(int index)
+{
+	if(this->wordList->isSelected()){
+		emit this->movedDown(index);
+	}
+}
+
+void WordlistWidget::dragedSlot(int from, int to)
+{
+	emit this->draged(from, to);
+}
+
+void WordlistWidget::mouseClickedSlot(int index)
+{
+	if(index == -1){
+		return;
+	}else{
+		emit this->clicked(index);
+	}
 }

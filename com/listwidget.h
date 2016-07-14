@@ -21,12 +21,12 @@ public:
 	bool isSelected();
 
 signals:
-	void mouseClicked();
-	void dropd(int from, int to);
-	void insert();
-	void remove();
-	void moveUp();
-	void moveDown();
+	void mouseClicked(int index);
+	void draged(int from, int to);
+	void insert(int index);
+	void remove(int index);
+	void moveUp(int index);
+	void moveDown(int index);
 private slots:
 	void insertSlot();
 	void removeSlot();

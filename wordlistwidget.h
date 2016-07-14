@@ -27,6 +27,7 @@ signals:
 	void movedUp(int index);
 	void movedDown(int index);
 	void draged(int from, int to);
+	void listEmpty();
 
 	void hideSig();
 public slots:
@@ -39,6 +40,13 @@ private slots:
 	void removeSlot();
 	void moveUpSlot();
 	void moveDownSlot();
+
+	void popInsertSlot(int index);
+	void popRemoveSlot(int index);
+	void popMoveUpSlot(int index);
+	void popMoveDoenSlot(int index);
+	void dragedSlot(int from, int to);
+	void mouseClickedSlot(int index);
 };
 
 #endif // WORDLISTWIDGET_H
