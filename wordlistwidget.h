@@ -16,6 +16,8 @@ class WordlistWidget : public QWidget
 	QPushButton *removeButton;
 	QPushButton *upButton;
 	QPushButton *downButton;
+
+	void closeEvent(QCloseEvent *event);
 public:
 	explicit WordlistWidget(QWidget *parent = 0);
 signals:
@@ -25,6 +27,8 @@ signals:
 	void movedUp(int index);
 	void movedDown(int index);
 	void draged(int from, int to);
+
+	void hideSig();
 public slots:
 	void update();
 	void clearList();

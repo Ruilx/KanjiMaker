@@ -14,11 +14,13 @@ class KanaPadWidget : public QWidget
 	KanaPushButton* youonPadButton[5][11];
 
 	void resizeEvent(QResizeEvent *event);
+	void closeEvent(QCloseEvent *event);
 public:
 	explicit KanaPadWidget(QWidget *parent = 0);
 
 signals:
 	void kanaClicked(QString name, bool e);
+	void hideSig();
 private slots:
 	void kanaPadClicked(QString name, bool e);
 public slots:

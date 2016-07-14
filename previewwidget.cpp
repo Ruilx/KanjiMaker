@@ -27,7 +27,7 @@ void PreviewWidget::resizeEvent(QResizeEvent *event)
 //				this->view->scale(qMin(widthScale, heightScale), qMin(widthScale, heightScale));
 //			}
 //		}
-//	}
+	//	}
 }
 
 PreviewWidget::PreviewWidget(QWidget *parent) : QWidget(parent)

@@ -5,6 +5,12 @@ void KanaPadWidget::resizeEvent(QResizeEvent *event)
 	//qDebug() << "Resize: W:" << event->size().width() << "H:" << event->size().height();
 }
 
+void KanaPadWidget::closeEvent(QCloseEvent *event)
+{
+	emit this->hideSig();
+	event->ignore();
+}
+
 KanaPadWidget::KanaPadWidget(QWidget *parent) : QWidget(parent)
 {
 	const QString hiragana[5] = {QString("あかがさざただなはばぱまやらわんぁ\n\nゃゎ"),

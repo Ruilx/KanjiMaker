@@ -5,14 +5,17 @@ void MainW::createMenus()
 	this->fileMenu = new QMenu(tr("File"), this);
 	this->newFileAct = new QAction(tr("New File"), this);
 	this->newFileAct->setShortcut(QKeySequence(QKeySequence::New));
+	connect(this->newFileAct, SIGNAL(triggered(bool)), this, SLOT(newFileSlot()));
 	this->fileMenu->addAction(this->newFileAct);
 
 	this->openFileAct = new QAction(tr("Open File"), this);
 	this->openFileAct->setShortcut(QKeySequence(QKeySequence::Open));
+	connect(this->openFileAct, SIGNAL(triggered(bool)), this, SLOT(openFileSlot()));
 	this->fileMenu->addAction(this->openFileAct);
 
 	this->saveFileAct = new QAction(tr("Save"), this);
 	this->saveFileAct->setShortcut(QKeySequence(QKeySequence::Save));
+	connect(this->saveFileAct, SIGNAL(triggered(bool)), this, SLOT(saveFileSlot()));
 	this->fileMenu->addAction(this->saveFileAct);
 
 	this->menuBar()->addMenu(this->fileMenu);
@@ -21,16 +24,19 @@ void MainW::createMenus()
 	this->wordListWindowAct = new QAction(tr("Word List"), this);
 	this->wordListWindowAct->setShortcut(QKeySequence("Alt+L"));
 	this->wordListWindowAct->setCheckable(true);
+	connect(this->wordListWindowAct, SIGNAL(triggered(bool)), this, SLOT(wordListWindowSlot(bool)));
 	this->windowMenu->addAction(this->wordListWindowAct);
 
 	this->wordPadWindowAct = new QAction(tr("Word Pad"), this);
 	this->wordPadWindowAct->setShortcut(QKeySequence("Alt+W"));
 	this->wordPadWindowAct->setCheckable(true);
+	connect(this->wordPadWindowAct, SIGNAL(triggered(bool)), this, SLOT(wordPadWindowSlot(bool)));
 	this->windowMenu->addAction(this->wordPadWindowAct);
 
 	this->kanaPadWindowAct = new QAction(tr("Kana Pad"), this);
 	this->kanaPadWindowAct->setShortcut(QKeySequence("Alt+K"));
 	this->kanaPadWindowAct->setCheckable(true);
+	connect(this->kanaPadWindowAct, SIGNAL(triggered(bool)), this, SLOT(kanaPadWindowSlot(bool)));
 	this->windowMenu->addAction(this->kanaPadWindowAct);
 
 	this->menuBar()->addMenu(this->windowMenu);
@@ -54,22 +60,25 @@ MainW::MainW(QWidget *parent)
 	this->wordListDockWidget = new QDockWidget(tr("Word List"), this);
 	wordListDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	wordListDockWidget->setWidget(this->wordListWidget);
-	wordListDockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+	wordListDockWidget->setFeatures(/*QDockWidget::DockWidgetClosable |*/ QDockWidget::DockWidgetMovable);
 	this->addDockWidget(Qt::LeftDockWidgetArea, wordListDockWidget);
+	connect(this->wordListWidget, SIGNAL(hideSig()), this, SLOT(wordListCloseSlot()));
 
 	this->wordPadDockWidget = new QDockWidget(tr("Word"), this);
 	wordPadDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 	wordPadDockWidget->setWidget(this->wordPadWidget);
-	wordPadDockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+	wordPadDockWidget->setFeatures(/*QDockWidget::DockWidgetClosable |*/ QDockWidget::DockWidgetMovable);
 	this->addDockWidget(Qt::TopDockWidgetArea, wordPadDockWidget);
 	connect(this->wordPadWidget, SIGNAL(lostFocus(QLineEdit*)), this, SLOT(wordPadLostFocus(QLineEdit*)));
+	connect(this->wordPadWidget, SIGNAL(hideSig()), this, SLOT(wordPadCloseSlot()));
 
 	this->kanaPadDockWidget = new QDockWidget(tr("Kana Pad"), this);
 	kanaPadDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 	kanaPadDockWidget->setWidget(this->kanaPadWidget);
-	kanaPadDockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+	kanaPadDockWidget->setFeatures(/*QDockWidget::DockWidgetClosable |*/ QDockWidget::DockWidgetMovable);
 	this->addDockWidget(Qt::BottomDockWidgetArea, kanaPadDockWidget);
 	connect(this->kanaPadWidget, SIGNAL(kanaClicked(QString,bool)), this, SLOT(kanaPadClickedSlot(QString,bool)));
+	connect(this->kanaPadWidget, SIGNAL(hideSig()), this, SLOT(kanaPadCloseSlot()));
 
 	this->setCentralWidget(this->previewWidget);
 
@@ -161,8 +170,6 @@ void MainW::newFileSlot()
 	this->word.clear();
 	this->wordListWidget->clearList();
 	this->fileOpenStatement();
-
-
 }
 
 bool MainW::openFileSlot()
@@ -224,6 +231,52 @@ bool MainW::saveFileSlot()
 			this->fileOpenStatement();
 			return true;
 		}
+	}
+	return false;
+}
+
+void MainW::wordListCloseSlot()
+{
+	this->wordListDockWidget->hide();
+	this->wordListWindowAct->setChecked(false);
+}
+
+void MainW::wordPadCloseSlot()
+{
+	this->wordPadDockWidget->hide();
+	this->wordPadWindowAct->setChecked(false);
+}
+
+void MainW::kanaPadCloseSlot()
+{
+	this->kanaPadDockWidget->hide();
+	this->kanaPadWindowAct->setChecked(false);
+}
+
+void MainW::wordListWindowSlot(bool e)
+{
+	if(e){
+		this->wordListDockWidget->show();
+	}else{
+		this->wordListDockWidget->hide();
+	}
+}
+
+void MainW::wordPadWindowSlot(bool e)
+{
+	if(e){
+		this->wordPadDockWidget->show();
+	}else{
+		this->wordPadDockWidget->hide();
+	}
+}
+
+void MainW::kanaPadWindowSlot(bool e)
+{
+	if(e){
+		this->kanaPadDockWidget->show();
+	}else{
+		this->kanaPadDockWidget->hide();
 	}
 }
 

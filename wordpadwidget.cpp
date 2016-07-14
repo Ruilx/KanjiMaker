@@ -7,6 +7,12 @@
 //	}
 //}
 
+void WordPadWidget::closeEvent(QCloseEvent *event)
+{
+	emit this->hideSig();
+	event->ignore();
+}
+
 WordPadWidget::WordPadWidget(QWidget *parent) : QWidget(parent)
 {
 	this->setMinimumWidth(500);

@@ -1,8 +1,14 @@
 #include "wordlistwidget.h"
 
+void WordlistWidget::closeEvent(QCloseEvent *event)
+{
+	emit this->hideSig();
+	event->ignore();
+}
+
 WordlistWidget::WordlistWidget(QWidget *parent) : QWidget(parent)
 {
-	this->setMaximumWidth(200);
+	this->setMaximumWidth(250);
 	this->setBaseSize(300, this->height());
 	this->groupBox = new QGroupBox("", this);
 	this->wordList = new ListWidget(this);

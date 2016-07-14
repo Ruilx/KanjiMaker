@@ -62,6 +62,13 @@ private slots:
 	bool openFileSlot();
 	bool saveFileSlot();
 
+	void wordListCloseSlot();
+	void wordPadCloseSlot();
+	void kanaPadCloseSlot();
+	void wordListWindowSlot(bool e);
+	void wordPadWindowSlot(bool e);
+	void kanaPadWindowSlot(bool e);
+
 private slots:
 	void fileNotOpenStatement();
 	void fileOpenStatement();

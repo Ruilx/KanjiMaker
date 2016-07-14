@@ -20,6 +20,7 @@ class WordPadWidget : public QWidget
 	QPushButton *saveButton;
 
 	//void focusOutEvent(QFocusEvent *event);
+	void closeEvent(QCloseEvent *event);
 public:
 	explicit WordPadWidget(QWidget *parent = 0);
 	void setKana(const QString &kana);
@@ -33,6 +34,8 @@ public:
 signals:
 	void lostFocus(QLineEdit *w);
 	void saveButtonClicked();
+
+	void hideSig();
 public slots:
 	bool eventFilter(QObject *watched, QEvent *event);
 private slots:

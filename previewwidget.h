@@ -20,7 +20,6 @@ public:
 	void setKanji(QString kanji);
 
 signals:
-
 public slots:
 };
 
