@@ -44,23 +44,32 @@ bool ReadSaveFile::loadFile(QList<KanjiWord> *fileData, Head *fileHead)
 {
 	QFile f(this->filePath);
 	if(f.open(QIODevice::ReadOnly)){
-		QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
+		QJsonParseError error;
+		QTextStream ts(&f);
+		QJsonDocument doc = QJsonDocument::fromJson(ts.readAll().toUtf8(), &error);
+		f.close();
 		if(doc.isNull() || doc.isEmpty()){
+			qDebug() << "[DEBUG]ReadSaveFile::loadFile doc.isNull or isEmpty";
+			qDebug() << "[DEBUG]ReadSaveFile::loadFile error:" << error.errorString();
 			return false;
 		}
 		if(doc.isArray()){
+			qDebug() << "[DEBUG]ReadSaveFile::loadFile doc.isArray";
 			return false;
 		}
 		QJsonObject obj = doc.object();
 		if(obj.isEmpty()){
+			qDebug() << "[DEBUG]ReadSaveFile::loadFile obj.isEmpty";
 			return false;
 		}
 		QJsonObject head = obj.value("head").toObject();
 		QJsonObject data = obj.value("data").toObject();
 		if(head.isEmpty()){
+			qDebug() << "[DEBUG]ReadSaveFile::loadFile head.isEmpty";
 			return false;
 		}
 		if(data.isEmpty()){
+			qDebug() << "[DEBUG]ReadSaveFile::loadFile data.isEmpty";
 			return false;
 		}
 		fileHead->name = head.value("name").toString();
@@ -85,6 +94,7 @@ bool ReadSaveFile::loadFile(QList<KanjiWord> *fileData, Head *fileHead)
 
 		return true;
 	}else{
+		qDebug() << "[DEBUG]ReadSaveFile::loadFile file cannot open.";
 		return false;
 	}
 
