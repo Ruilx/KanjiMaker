@@ -1,6 +1,5 @@
 #include "previewwidget.h"
 
-
 void PreviewWidget::resizeEvent(QResizeEvent *event)
 {
 	Q_UNUSED(event);
@@ -34,7 +33,7 @@ PreviewWidget::PreviewWidget(QWidget *parent) : QWidget(parent)
 {
 	this->groupBox = new QGroupBox(tr("Preview"), this);
 	this->scene = new QGraphicsScene(this);
-	this->view = new QGraphicsView(this->scene, this);
+	this->view = new View(this->scene, this);
 
 	QVBoxLayout *lay = new QVBoxLayout;
 	this->groupBox->setLayout(lay);
@@ -44,19 +43,18 @@ PreviewWidget::PreviewWidget(QWidget *parent) : QWidget(parent)
 	this->setLayout(mainLay);
 	mainLay->addWidget(this->groupBox);
 
-	QFont font;{
-		font.setFamily("A-OTF Folk Pro M, Microsoft YaHei");
-		font.setPixelSize(52);
-	}
-	i = new QGraphicsTextItem;
-	i->setPlainText("カンジ　メーカー");
+	this->scene->addItem(i = new QGraphicsTextItem);
+
+	QFont font;
+	font.setFamily("A-OTF Folk Pro M, Microsoft YaHei");
 	i->setFont(font);
+
+	setKanji("カンジ　メーカー");
 	//i->setFlag(QGraphicsItem::ItemIsMovable, true);
 
-	this->scene->addItem(i);
-
-	this->view->resize(this->scene->width(), this->scene->height());
-
+	view->setMinimumSize(0, 0);
+	view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	//view->resize(QSize(i->boundingRect().size()));
 }
 
 void PreviewWidget::setKana(const QString &kana)
@@ -68,18 +66,12 @@ void PreviewWidget::setKana(const QString &kana)
 void PreviewWidget::setKanji(const QString &kanji)
 {
 	this->i->setPlainText(kanji);
-	QFont font = this->i->font();
-	//font.setPixelSize(40);
-	this->i->setFont(font);
-	this->i->setPos((this->view->size().width() - this->i->boundingRect().width()) * 0.5f,
-					(this->view->size().height() - this->i->boundingRect().height()) * 0.5f);
-}
-
-void PreviewWidget::setFontSize(int pixelSize)
-{
-	QFont fnt = this->i->font();
-	fnt.setPixelSize(pixelSize);
-	this->i->setFont(fnt);
+	i->adjustSize();
+	qreal marginV = i->boundingRect().height() / 4. / 2.;
+	qreal marginH = i->boundingRect().width() / 4. / 2.;
+	scene->setSceneRect(i->boundingRect().marginsAdded(QMarginsF(marginH, marginV, marginH, marginV)));
+	view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+	//qDebug() << __PRETTY_FUNCTION__ << i->boundingRect();
 }
 
 void PreviewWidget::setKanjiSlot(QString kanji)

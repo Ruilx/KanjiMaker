@@ -174,7 +174,7 @@ void MainW::newFileSlot()
 	this->wordListWidget->clearList();
 	this->wordListWidget->setList(this->word);
 	this->wordListWidget->setHead(this->head);
-	this->previewWidget->setFontSize(30);
+	//this->previewWidget->setFontSize(30);
 	this->previewWidget->setKanji(tr("新しいエントリの左のリストをクリックします"));
 	this->fileOpenStatement();
 }
@@ -218,7 +218,7 @@ bool MainW::openFileSlot()
 	this->fileOpenStatement();
 	this->wordListWidget->setHead(this->head);
 	this->wordListWidget->setList(this->word);
-	this->previewWidget->setFontSize(30);
+	//this->previewWidget->setFontSize(30);
 	this->previewWidget->setKanji(tr("エントリを表示するには、左側のをクリックして"));
 	return true;
 }
@@ -338,7 +338,7 @@ void MainW::wordListClicked(int index)
 	this->wordPadWidget->setKanji(w.kanji);
 	this->wordPadWidget->setChinese(w.chinese);
 	this->wordPadWidget->setEnglish(w.english);
-	this->previewWidget->setFontSize(40);
+	//this->previewWidget->setFontSize(40);
 	this->previewWidget->setKana(w.kana);
 	this->previewWidget->setKanji(w.kanji);
 	this->wordPadDockWidget->show();
