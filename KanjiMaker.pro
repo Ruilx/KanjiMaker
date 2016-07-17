@@ -33,3 +33,4 @@ HEADERS  += mainw.h \
     previewwidget.h \
     core/structure.h \
     core/readsavefile.h
+    view.h

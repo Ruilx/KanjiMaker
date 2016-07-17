@@ -2,12 +2,12 @@
 #define PREVIEWWIDGET_H
 
 #include <QtWidgets>
-#include "view.h"
+#include "com/graphicsview.h"
 
 class PreviewWidget : public QWidget
 {
 	Q_OBJECT
-	View *view;
+	GraphicsView *view;
 	QGraphicsScene *scene;
 
 	QGroupBox *groupBox;
