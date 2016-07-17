@@ -2,11 +2,12 @@
 #define PREVIEWWIDGET_H
 
 #include <QtWidgets>
+#include "view.h"
 
 class PreviewWidget : public QWidget
 {
 	Q_OBJECT
-	QGraphicsView *view;
+	View *view;
 	QGraphicsScene *scene;
 
 	QGroupBox *groupBox;
@@ -18,7 +19,6 @@ public:
 	explicit PreviewWidget(QWidget *parent = 0);
 	void setKana(const QString &kana);
 	void setKanji(const QString &kanji);
-	void setFontSize(int pixelSize);
 
 signals:
 public slots:

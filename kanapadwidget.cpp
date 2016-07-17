@@ -2,6 +2,7 @@
 
 void KanaPadWidget::resizeEvent(QResizeEvent *event)
 {
+	Q_UNUSED(event)
 	//qDebug() << "Resize: W:" << event->size().width() << "H:" << event->size().height();
 }
 
