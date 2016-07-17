@@ -33,7 +33,7 @@ PreviewWidget::PreviewWidget(QWidget *parent) : QWidget(parent)
 {
 	this->groupBox = new QGroupBox(tr("Preview"), this);
 	this->scene = new QGraphicsScene(this);
-	this->view = new View(this->scene, this);
+	this->view = new GraphicsView(this->scene, this);
 
 	QVBoxLayout *lay = new QVBoxLayout;
 	this->groupBox->setLayout(lay);
