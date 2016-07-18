@@ -110,9 +110,27 @@ void WordlistWidget::setList(const QList<KanjiWord> &word)
 	this->wordList->clear();
 	foreach(KanjiWord w, word){
 		if(w.kanji.isEmpty()){
-			this->wordList->addItem(tr("名前しない"));
+			this->wordList->addItem(tr("[名前しない]"));
 		}else{
-			this->wordList->addItem(w.kanji);
+//			QImage img(16, 16, QImage::Format_ARGB32);
+//			img.fill(Qt::white);
+//			QPainter painter(&img);
+//			painter.setFont(QFont("Microsoft YaHei", 9));
+//			painter.drawText(0, 12, w.kanji.left(1));
+//			QIcon icon(QPixmap::fromImage(img));
+			QListWidgetItem *i = new QListWidgetItem(this->wordList);
+			if(w.kana == w.kanji){
+				i->setText(tr("%1 [%2]").arg(w.kanji).arg(w.chinese));
+				i->setToolTip(tr("%1 [%2]").arg(w.kanji).arg(w.chinese));
+//				i->setIcon(icon);
+				//this->wordList->addItem(tr("%1 [%2]").arg(w.kanji).arg(w.chinese));
+			}else{
+				i->setText(tr("%1 (%2) [%3]").arg(w.kanji).arg(w.kana).arg(w.chinese));
+				i->setToolTip(tr("%1 (%2) [%3]").arg(w.kanji).arg(w.kana).arg(w.chinese));
+//				i->setIcon(icon);
+				//this->wordList->addItem(tr("%1 (%2) [%3]").arg(w.kanji).arg(w.kana).arg(w.chinese));
+			}
+			this->wordList->addItem(i);
 		}
 	}
 	this->update();

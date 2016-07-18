@@ -203,13 +203,13 @@ bool MainW::openFileSlot()
 			return false;
 		}
 	}
-	this->head.name.clear();
-	this->word.clear();
-	this->wordListWidget->clearList();
 	QString filename = QFileDialog::getOpenFileName(this, "Open Word File", QDir::currentPath(), "Kanji Word File(*.kji);;Kanji Json File(*.json);;All Files(*.*)");
 	if(filename.isEmpty()){
 		return false;
 	}
+	this->head.name.clear();
+	this->word.clear();
+	this->wordListWidget->clearList();
 	ReadSaveFile readFile(filename);
 	if(!readFile.loadFile(&this->word, &this->head)){
 		QMessageBox::critical(this, "Kanji Maker", "This file is not vaild.", QMessageBox::Ok);

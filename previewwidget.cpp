@@ -65,12 +65,15 @@ void PreviewWidget::setKana(const QString &kana)
 
 void PreviewWidget::setKanji(const QString &kanji)
 {
+	const qreal adjustV = -3.0f;
+	const qreal adjustH = 0.0f;
 	this->i->setPlainText(kanji);
 	i->adjustSize();
-	qreal marginV = i->boundingRect().height() / 4. / 2.;
-	qreal marginH = i->boundingRect().width() / 4. / 2.;
-	scene->setSceneRect(i->boundingRect().marginsAdded(QMarginsF(marginH, marginV, marginH, marginV)));
-	view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+	qreal marginV = i->boundingRect().height() / 4.f / 2.f;
+	qreal marginH = i->boundingRect().width() / 4.f / 2.f;
+	scene->setSceneRect(i->boundingRect().marginsAdded(QMarginsF(marginH + adjustH, marginV + adjustV, marginH, marginV)));
+	//view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+
 	//qDebug() << __PRETTY_FUNCTION__ << i->boundingRect();
 }
 
