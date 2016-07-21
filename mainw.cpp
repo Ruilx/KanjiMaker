@@ -2,38 +2,38 @@
 
 void MainW::createMenus()
 {
-	this->fileMenu = new QMenu(tr("File"), this);
-	this->newFileAct = new QAction(tr("New File"), this);
+	this->fileMenu = new QMenu(tr("&File"), this);
+	this->newFileAct = new QAction(tr("&New File"), this);
 	this->newFileAct->setShortcut(QKeySequence(QKeySequence::New));
 	connect(this->newFileAct, SIGNAL(triggered(bool)), this, SLOT(newFileSlot()));
 	this->fileMenu->addAction(this->newFileAct);
 
-	this->openFileAct = new QAction(tr("Open File"), this);
+	this->openFileAct = new QAction(tr("&Open File"), this);
 	this->openFileAct->setShortcut(QKeySequence(QKeySequence::Open));
 	connect(this->openFileAct, SIGNAL(triggered(bool)), this, SLOT(openFileSlot()));
 	this->fileMenu->addAction(this->openFileAct);
 
-	this->saveFileAct = new QAction(tr("Save"), this);
+	this->saveFileAct = new QAction(tr("&Save"), this);
 	this->saveFileAct->setShortcut(QKeySequence(QKeySequence::Save));
 	connect(this->saveFileAct, SIGNAL(triggered(bool)), this, SLOT(saveFileSlot()));
 	this->fileMenu->addAction(this->saveFileAct);
 
 	this->menuBar()->addMenu(this->fileMenu);
 
-	this->windowMenu = new QMenu(tr("Window"), this);
-	this->wordListWindowAct = new QAction(tr("Word List"), this);
+	this->windowMenu = new QMenu(tr("&Window"), this);
+	this->wordListWindowAct = new QAction(tr("Word &List"), this);
 	this->wordListWindowAct->setShortcut(QKeySequence("Alt+L"));
 	this->wordListWindowAct->setCheckable(true);
 	connect(this->wordListWindowAct, SIGNAL(triggered(bool)), this, SLOT(wordListWindowSlot(bool)));
 	this->windowMenu->addAction(this->wordListWindowAct);
 
-	this->wordPadWindowAct = new QAction(tr("Word Pad"), this);
+	this->wordPadWindowAct = new QAction(tr("Word &Pad"), this);
 	this->wordPadWindowAct->setShortcut(QKeySequence("Alt+W"));
 	this->wordPadWindowAct->setCheckable(true);
 	connect(this->wordPadWindowAct, SIGNAL(triggered(bool)), this, SLOT(wordPadWindowSlot(bool)));
 	this->windowMenu->addAction(this->wordPadWindowAct);
 
-	this->kanaPadWindowAct = new QAction(tr("Kana Pad"), this);
+	this->kanaPadWindowAct = new QAction(tr("&Kana Pad"), this);
 	this->kanaPadWindowAct->setShortcut(QKeySequence("Alt+K"));
 	this->kanaPadWindowAct->setCheckable(true);
 	connect(this->kanaPadWindowAct, SIGNAL(triggered(bool)), this, SLOT(kanaPadWindowSlot(bool)));
@@ -41,13 +41,13 @@ void MainW::createMenus()
 
 	this->menuBar()->addMenu(this->windowMenu);
 
-	this->helpMenu = new QMenu(tr("Help"), this);
-	this->aboutAct = new QAction(tr("About..."), this);
+	this->helpMenu = new QMenu(tr("&Help"), this);
+	this->aboutAct = new QAction(tr("&About..."), this);
 	this->aboutAct->setShortcut(QKeySequence("F11"));
 	connect(this->aboutAct, SIGNAL(triggered(bool)), this, SLOT(aboutSlot()));
 	this->helpMenu->addAction(this->aboutAct);
 
-	this->aboutQtAct = new QAction(tr("About Qt..."), this);
+	this->aboutQtAct = new QAction(tr("About &Qt..."), this);
 	this->aboutQtAct->setShortcut(QKeySequence("F12"));
 	connect(this->aboutQtAct, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
 	this->helpMenu->addAction(this->aboutQtAct);
@@ -62,6 +62,7 @@ MainW::MainW(QWidget *parent)
 	this->setWindowIcon(QIcon(":/data/image/logo.png"));
 	this->setWindowTitle(ApplicationName);
 	this->currentFocusWordPadLineEdit = nullptr;
+	this->currentWordIndex = -1;
 	this->wordListWidget = new WordlistWidget(this);
 	this->wordPadWidget = new WordPadWidget(this);
 	this->kanaPadWidget = new KanaPadWidget(this);
@@ -159,7 +160,7 @@ void MainW::newFileSlot()
 {
 	if(this->statement & FileModified){
 		int cancelled = 0;
-		int result = QMessageBox::question(this, "Kanji Maker", tr("You have modified the project, are you really want to create new file?"), QMessageBox::Yes | QMessageBox::Save | QMessageBox::Cancel);
+		int result = QMessageBox::question(this, ApplicationName, tr("You have modified the project, are you really want to create new file?"), QMessageBox::Yes | QMessageBox::Save | QMessageBox::Cancel);
 		switch(result){
 			case QMessageBox::Yes:
 			case QMessageBox::Discard: cancelled = 0; break;
@@ -179,7 +180,7 @@ void MainW::newFileSlot()
 			return;
 		}
 	}
-	QString headName = QInputDialog::getText(this, tr("Kanji Maker"), tr("Please enter this project's name:"));
+	QString headName = QInputDialog::getText(this, ApplicationName, tr("Please enter this project's name:"));
 	if(headName.isEmpty()){
 		QMessageBox::warning(this, "Kanji Maker", tr("Please enter an name for this project."), QMessageBox::Ok);
 		return;
@@ -198,7 +199,7 @@ bool MainW::openFileSlot()
 {
 	if(this->statement & FileModified){
 		int cancelled = 0;
-		int result = QMessageBox::question(this,  "Kanji Maker", tr("You have modified the project, are you really want to open file?"), QMessageBox::Yes | QMessageBox::Save | QMessageBox::Cancel);
+		int result = QMessageBox::question(this,  ApplicationName, tr("You have modified the project, are you really want to open file?"), QMessageBox::Yes | QMessageBox::Save | QMessageBox::Cancel);
 		switch(result){
 			case QMessageBox::Yes:
 			case QMessageBox::Discard: cancelled = 0; break;
@@ -227,7 +228,7 @@ bool MainW::openFileSlot()
 	this->wordListWidget->clearList();
 	ReadSaveFile readFile(filename);
 	if(!readFile.loadFile(&this->word, &this->head)){
-		QMessageBox::critical(this, "Kanji Maker", "This file is not vaild.", QMessageBox::Ok);
+		QMessageBox::critical(this, ApplicationName, "This file is not vaild.", QMessageBox::Ok);
 		return false;
 	}
 	this->fileOpenStatement();
@@ -241,17 +242,17 @@ bool MainW::openFileSlot()
 bool MainW::saveFileSlot()
 {
 	if(this->word.isEmpty()){
-		QMessageBox::information(this, "Kanji Maker", "Your word list is empty...", QMessageBox::Ok);
+		QMessageBox::information(this, ApplicationName, "Your word list is empty...", QMessageBox::Ok);
 		return false;
 	}
 	if(this->statement & FileModified){
 		QString filename = QFileDialog::getSaveFileName(this, "Save Word File", QDir::currentPath(), "Kanji Word File(*.kji);;Kanji Json File(*.json);;All Files(*.*)");
 		ReadSaveFile saveFile(filename);
 		if(!saveFile.saveFile(this->word, this->head)){
-			QMessageBox::critical(this, "Kanji Maker", "Save Failed...", QMessageBox::Ok);
+			QMessageBox::critical(this, ApplicationName, tr("Save Failed..."), QMessageBox::Ok);
 			return false;
 		}else{
-			QMessageBox::information(this, "Kanji Maker", "Word File Saved.", QMessageBox::Ok);
+			QMessageBox::information(this, ApplicationName, tr("Word File Saved."), QMessageBox::Ok);
 			this->fileOpenStatement();
 			return true;
 		}
