@@ -10,6 +10,7 @@
 #include "previewwidget.h"
 #include "core/structure.h"
 #include "core/readsavefile.h"
+#include "aboutwidget.h"
 
 class MainW : public QMainWindow
 {
@@ -43,6 +44,10 @@ class MainW : public QMainWindow
 	QAction *wordPadWindowAct;
 	QAction *kanaPadWindowAct;
 
+	QMenu *helpMenu;
+	QAction *aboutAct;
+	QAction *aboutQtAct;
+
 	int currentWordIndex;
 	QList<KanjiWord> word;
 	Head head;
@@ -69,6 +74,8 @@ private slots:
 	void wordListWindowSlot(bool e);
 	void wordPadWindowSlot(bool e);
 	void kanaPadWindowSlot(bool e);
+
+	void aboutSlot();
 
 private slots:
 	void fileNotOpenStatement();

@@ -1,34 +1,5 @@
 #include "previewwidget.h"
 
-void PreviewWidget::resizeEvent(QResizeEvent *event)
-{
-	Q_UNUSED(event);
-//	qDebug() << "Widget: W:" << event->size().width() << "H:" << event->size().height();
-//	qDebug() << "Scene:  W:" << this->scene->width() << "H:" << this->scene->height();
-//	qDebug() << "View:   W:" << this->view->width() << "H:" << this->view->height();
-//	i->setPlainText(QString("View Width: %1, Height: %2.").arg(this->view->width()).arg(this->view->height()));
-//	QRectF r = i->boundingRect();
-//	QSize v(this->view->width() - 20, this->view->height() - 20);
-//	QFont f = i->font();
-//	if(v.width() > v.height()){
-//		if(r.width() > r.height()){
-//			if(r.width() > v.width() && r.height() < v.height()){
-//				this->view->scale((qreal)v.width() / (qreal)r.width(), (qreal)v.width() / (qreal)r.width());
-//			}else if(r.width() > v.width() && r.height() > v.height()){
-//				qreal widthScale = v.width() / r.width();
-//				qreal heightScale = v.height() / r.height();
-//				this->view->scale(qMin(widthScale, heightScale), qMin(widthScale, heightScale));
-//			}else if(r.width() < v.width() && r.height() < v.height()){
-//				this->view->scale((qreal)v.width() / (qreal)r.width(), (qreal)v.width() / (qreal)r.width());
-//			}else if(r.width() < v.width() && r.height() > v.height()){
-//				qreal widthScale = v.width() / r.width();
-//				qreal heightScale = v.height() / r.height();
-//				this->view->scale(qMin(widthScale, heightScale), qMin(widthScale, heightScale));
-//			}
-//		}
-	//	}
-}
-
 PreviewWidget::PreviewWidget(QWidget *parent) : QWidget(parent)
 {
 	this->groupBox = new QGroupBox(tr("Preview"), this);
@@ -72,7 +43,7 @@ void PreviewWidget::setKanji(const QString &kanji)
 	qreal marginV = i->boundingRect().height() / 4.f / 2.f;
 	qreal marginH = i->boundingRect().width() / 4.f / 2.f;
 	scene->setSceneRect(i->boundingRect().marginsAdded(QMarginsF(marginH + adjustH, marginV + adjustV, marginH, marginV)));
-	//view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+	view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 
 	//qDebug() << __PRETTY_FUNCTION__ << i->boundingRect();
 }

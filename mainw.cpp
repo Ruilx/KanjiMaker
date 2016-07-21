@@ -40,12 +40,27 @@ void MainW::createMenus()
 	this->windowMenu->addAction(this->kanaPadWindowAct);
 
 	this->menuBar()->addMenu(this->windowMenu);
+
+	this->helpMenu = new QMenu(tr("Help"), this);
+	this->aboutAct = new QAction(tr("About..."), this);
+	this->aboutAct->setShortcut(QKeySequence("F11"));
+	connect(this->aboutAct, SIGNAL(triggered(bool)), this, SLOT(aboutSlot()));
+	this->helpMenu->addAction(this->aboutAct);
+
+	this->aboutQtAct = new QAction(tr("About Qt..."), this);
+	this->aboutQtAct->setShortcut(QKeySequence("F12"));
+	connect(this->aboutQtAct, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
+	this->helpMenu->addAction(this->aboutQtAct);
+
+	this->menuBar()->addMenu(this->helpMenu);
 }
 
 MainW::MainW(QWidget *parent)
 	: QMainWindow(parent)
 {
 	this->resize(1024, 768);
+	this->setWindowIcon(QIcon(":/data/image/logo.png"));
+	this->setWindowTitle(ApplicationName);
 	this->currentFocusWordPadLineEdit = nullptr;
 	this->wordListWidget = new WordlistWidget(this);
 	this->wordPadWidget = new WordPadWidget(this);
@@ -287,6 +302,12 @@ void MainW::kanaPadWindowSlot(bool e)
 	}else{
 		this->kanaPadDockWidget->hide();
 	}
+}
+
+void MainW::aboutSlot()
+{
+	AboutWidget about(this);
+	about.exec();
 }
 
 void MainW::fileNotOpenStatement()

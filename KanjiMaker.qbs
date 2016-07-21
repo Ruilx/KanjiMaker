@@ -10,6 +10,8 @@ QtGuiApplication {
         "*.h",
         "**/*.cpp",
         "**/*.h",
+        "resource.qrc",
+        "resource.rc"
     ]
 
     Group {     // Properties for the produced executable
