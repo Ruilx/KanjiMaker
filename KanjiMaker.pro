@@ -8,29 +8,45 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+CONFIG += -std=c++11
+
 TARGET = KanjiMaker
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainw.cpp \
-    wordlistwidget.cpp \
-    com/listwidget.cpp \
-    wordpadwidget.cpp \
-    kanapadwidget.cpp \
-    com/kanapushbutton.cpp \
-    com/lineedit.cpp \
-    previewwidget.cpp \
-    core/readsavefile.cpp
+SOURCES += \
+aboutwidget.cpp \
+kanapadwidget.cpp \
+main.cpp \
+mainw.cpp \
+previewwidget.cpp \
+wordlistwidget.cpp \
+wordpadwidget.cpp \
+com/graphicsview.cpp \
+com/kanapushbutton.cpp \
+com/lineedit.cpp \
+com/listwidget.cpp \
+core/readsavefile.cpp
 
-HEADERS  += mainw.h \
-    wordlistwidget.h \
-    com/listwidget.h \
-    wordpadwidget.h \
-    kanapadwidget.h \
-    com/kanapushbutton.h \
-    com/lineedit.h \
-    previewwidget.h \
-    core/structure.h \
-    core/readsavefile.h
-    view.h
+
+HEADERS  += \
+aboutwidget.h \
+kanapadwidget.h \
+mainw.h \
+previewwidget.h \
+wordlistwidget.h \
+wordpadwidget.h \
+com/graphicsview.cpp \
+com/graphicsview.h \
+com/kanapushbutton.cpp \
+com/kanapushbutton.h \
+com/lineedit.h \
+com/listwidget.h \
+core/about.h \
+core/readsavefile.h \
+core/structure.h
+
+RESOURCES += resource.qrc \
+resource.rc
+
+TRANSLATIONS += zh_CN.UTF-8.ts
