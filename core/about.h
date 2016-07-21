@@ -3,7 +3,7 @@
 
 #include <QtCore>
 
-#define ApplicationName tr("Kanji Maker")
+#define ApplicationName QObject::tr("Kanji Maker")
 #define OrganizationName "GT-Soft Studio"
 #define AuthorName "Ruilx"
 #define AuthorEmail "zrrabbit@gmail.com"
