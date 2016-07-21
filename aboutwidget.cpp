@@ -1,8 +1,13 @@
 #include "aboutwidget.h"
 
+void AboutWidget::resizeEvent(QResizeEvent *e)
+{
+	qDebug() << e->size();
+}
+
 AboutWidget::AboutWidget(QWidget *parent) : QDialog(parent)
 {
-	this->setFixedSize(549, 154);
+	this->setFixedSize(491, 156);
 	this->setFont(QFont(tr("Microsoft YaHei"), 9));
 
 	Qt::WindowFlags flags=Qt::Dialog;

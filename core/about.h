@@ -8,7 +8,7 @@
 #define AuthorName "Ruilx"
 #define AuthorEmail "zrrabbit@gmail.com"
 #define AuxiliaryName "zhiyb"
-#define AuxiliaryEmail "544080857@qq.com"
+#define AuxiliaryEmail "zhiyb@qq.com"
 #define ApplicationBugReportEmail "zrrabbit@gmail.com"
 #define WebPage "http://www.Ruilx.pw"
 #define UsingLicense "General Public License"

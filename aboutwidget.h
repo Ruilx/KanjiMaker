@@ -15,6 +15,7 @@ class AboutWidget : public QDialog
 	QLabel *license;
 	QLabel *repo;
 	QLabel *logo;
+
 public:
 	explicit AboutWidget(QWidget *parent = 0);
 
