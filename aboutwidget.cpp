@@ -34,12 +34,16 @@ void AboutWidget::mouseReleaseEvent(QMouseEvent *e)
 //		group->addAnimation(animation);
 		group->addAnimation(animation2);
 
-		group->start(/*QAbstractAnimation::DeleteWhenStopped*/);
+		group->start(QAbstractAnimation::DeleteWhenStopped);
 		//animation2->start();
 	}
 	QDialog::mouseReleaseEvent(e);
 	if(count >=5 && count < 10){
-		this->setWindowTitle(tr("Press [Enter] to close the window. Or click this ->"));
+		QString spaceCounter;
+		for(int i = 5; i < count; i++){
+			spaceCounter.append("   ");
+		}
+		this->setWindowTitle(tr("%1Press [Enter] to close the window. Or click this %2→").arg(spaceCounter).arg(spaceCounter));
 	}else if(count >= 10){
 		this->close();
 	}
@@ -128,7 +132,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QDialog(parent)
 	lay->addWidget(this->license, 4, 1, 1, 1, Qt::AlignLeft);
 	lay->addWidget(this->repo, 5, 1, 1, 1, Qt::AlignLeft);
 
-	this->setWindowTitle(tr("About %1").arg(ApplicationName));
+	this->setWindowTitle(tr("About %1(v%2.%3)").arg(ApplicationName).arg(majorVersion).arg(minorVersion));
 
 	this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
