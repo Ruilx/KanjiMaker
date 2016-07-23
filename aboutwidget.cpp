@@ -3,37 +3,46 @@
 void AboutWidget::mouseReleaseEvent(QMouseEvent *e)
 {
 	if(e->button() == Qt::LeftButton){
-		QPoint p = this->pos();
-		QPoint p2 = QPoint(this->pos().x(), this->pos().y() + 100);
+		QPoint p = QPoint(this->pos().x(), this->pos().y());
+		QPoint p2 = QPoint(this->pos().x(), this->pos().y());
+		QPoint p3 = QPoint(this->pos().x(), this->pos().y() + 15);
+		QPoint p4 = QPoint(this->pos().x(), this->pos().y() - 15);
 
-//		QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+//		QSize s = this->size();
+//		QSize s2 = QSize(this->size().width(), this->size().height() + 100);
+
+//		QPropertyAnimation *animation = new QPropertyAnimation(this, "size");
 //		animation->setDuration(200);
-//		animation->setEasingCurve(QEasingCurve::InBack);
-//		animation->setStartValue(p);
-//		animation->setEndValue(p2);
+//		animation->setEasingCurve(QEasingCurve::OutBack);
+//		animation->setStartValue(s2);
+//		animation->setEndValue(s);
 
 		QPropertyAnimation *animation2 = new QPropertyAnimation(this, "pos");
-		animation2->setDuration(200);
-		animation2->setEasingCurve(QEasingCurve::OutBack);
+		animation2->setDuration(300);
+		animation2->setEasingCurve(QEasingCurve::InOutBack);
 		animation2->setStartValue(p2);
 		animation2->setEndValue(p);
+		animation2->setKeyValueAt(0.25, p3);
+		animation2->setKeyValueAt(0.5, p);
+		animation2->setKeyValueAt(0.75, p4);
 
-//		QParallelAnimationGroup *group = new QParallelAnimationGroup(this);
-//		//group->addAnimation(animation);
-//		group->addAnimation(animation2);
+		QParallelAnimationGroup *group = new QParallelAnimationGroup(this);
+//		group->addAnimation(animation);
+		group->addAnimation(animation2);
 
-//		group->start(/*QAbstractAnimation::DeleteWhenStopped*/);
-		animation2->start();
+		group->start(/*QAbstractAnimation::DeleteWhenStopped*/);
+		//animation2->start();
 	}
 	QDialog::mouseReleaseEvent(e);
 }
 
 void AboutWidget::keyReleaseEvent(QKeyEvent *e)
 {
-	qDebug() << e->key();
-	if(e->key() & Qt::Key_Return){
+	qDebug() << e->key() << Qt::Key_Return;
+	if(e->key() == Qt::Key_Return){
 		this->close();
 	}
+	QDialog::keyReleaseEvent(e);
 }
 
 AboutWidget::AboutWidget(QWidget *parent) : QDialog(parent)
