@@ -2,6 +2,8 @@
 #define ABOUTWIDGET_H
 
 #include <QtWidgets>
+#include <QPropertyAnimation>
+#include <QEasingCurve>
 #include "core/about.h"
 
 class AboutWidget : public QDialog
@@ -15,6 +17,9 @@ class AboutWidget : public QDialog
 	QLabel *license;
 	QLabel *repo;
 	QLabel *logo;
+
+	void mouseReleaseEvent(QMouseEvent *e);
+	void keyReleaseEvent(QKeyEvent *e);
 
 public:
 	explicit AboutWidget(QWidget *parent = 0);

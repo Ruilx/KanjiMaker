@@ -1,13 +1,43 @@
 #include "aboutwidget.h"
 
-void AboutWidget::resizeEvent(QResizeEvent *e)
+void AboutWidget::mouseReleaseEvent(QMouseEvent *e)
 {
-	qDebug() << e->size();
+	if(e->button() == Qt::LeftButton){
+		QPoint p = this->pos();
+		QPoint p2 = QPoint(this->pos().x(), this->pos().y() + 100);
+
+//		QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+//		animation->setDuration(200);
+//		animation->setEasingCurve(QEasingCurve::InBack);
+//		animation->setStartValue(p);
+//		animation->setEndValue(p2);
+
+		QPropertyAnimation *animation2 = new QPropertyAnimation(this, "pos");
+		animation2->setDuration(200);
+		animation2->setEasingCurve(QEasingCurve::OutBack);
+		animation2->setStartValue(p2);
+		animation2->setEndValue(p);
+
+//		QParallelAnimationGroup *group = new QParallelAnimationGroup(this);
+//		//group->addAnimation(animation);
+//		group->addAnimation(animation2);
+
+//		group->start(/*QAbstractAnimation::DeleteWhenStopped*/);
+		animation2->start();
+	}
+	QDialog::mouseReleaseEvent(e);
+}
+
+void AboutWidget::keyReleaseEvent(QKeyEvent *e)
+{
+	qDebug() << e->key();
+	if(e->key() & Qt::Key_Return){
+		this->close();
+	}
 }
 
 AboutWidget::AboutWidget(QWidget *parent) : QDialog(parent)
 {
-	this->setFixedSize(491, 156);
 	this->setFont(QFont(tr("Microsoft YaHei"), 9));
 
 	Qt::WindowFlags flags=Qt::Dialog;
@@ -78,5 +108,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QDialog(parent)
 	lay->addWidget(this->repo, 5, 1, 1, 1, Qt::AlignLeft);
 
 	this->setWindowTitle(tr("About %1").arg(ApplicationName));
+
+	this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
 }

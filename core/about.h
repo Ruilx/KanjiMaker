@@ -11,7 +11,7 @@
 #define AuxiliaryEmail "zhiyb@qq.com"
 #define ApplicationBugReportEmail "zrrabbit@gmail.com"
 #define WebPage "http://www.Ruilx.pw"
-#define UsingLicense "General Public License"
+#define UsingLicense "GNU General Public License"
 #define UsingLicenseVersion 0x00000300
 #define UsingSDK "Qt"
 #define UsingSDKVersion QT_VERSION
