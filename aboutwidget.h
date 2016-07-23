@@ -27,6 +27,9 @@ public:
 signals:
 
 public slots:
+
+private slots:
+	void openRepoSlot(const QString &link);
 };
 
 #endif // ABOUTWIDGET_H

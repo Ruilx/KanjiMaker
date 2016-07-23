@@ -2,7 +2,11 @@
 
 void AboutWidget::mouseReleaseEvent(QMouseEvent *e)
 {
+	static quint8 count = 0;
 	if(e->button() == Qt::LeftButton){
+		if(count < 10){
+			count++;
+		}
 		QPoint p = QPoint(this->pos().x(), this->pos().y());
 		QPoint p2 = QPoint(this->pos().x(), this->pos().y());
 		QPoint p3 = QPoint(this->pos().x(), this->pos().y() + 15);
@@ -34,6 +38,12 @@ void AboutWidget::mouseReleaseEvent(QMouseEvent *e)
 		//animation2->start();
 	}
 	QDialog::mouseReleaseEvent(e);
+	if(count >=5 && count < 10){
+		this->setWindowTitle(tr("Press [Enter] to close the window. Or click this ->"));
+	}else if(count >= 10){
+		this->close();
+	}
+
 }
 
 void AboutWidget::keyReleaseEvent(QKeyEvent *e)
@@ -101,7 +111,9 @@ AboutWidget::AboutWidget(QWidget *parent) : QDialog(parent)
 	this->license = new QLabel(tr("License: %1 version %2.%3")
 							   .arg(UsingLicense).arg(licenseMajorVersion).arg(licenseMinorVersion), this);
 
-	this->repo = new QLabel("Repo: http://github.com/Ruilx/KanjiMaker", this);
+	this->repo = new QLabel("Repo: <a href='http://github.com/Ruilx/KanjiMaker'>http://github.com/Ruilx/KanjiMaker</a>", this);
+
+	connect(this->repo, SIGNAL(linkActivated(QString)), this, SLOT(openRepoSlot(QString)));
 
 	this->logo = new QLabel(this);
 	this->logo->setPixmap(QPixmap(":/data/image/logo.png"));
@@ -120,4 +132,9 @@ AboutWidget::AboutWidget(QWidget *parent) : QDialog(parent)
 
 	this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
+}
+
+void AboutWidget::openRepoSlot(const QString &link)
+{
+	QDesktopServices::openUrl(QUrl(link));
 }
