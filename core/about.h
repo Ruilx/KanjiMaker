@@ -15,7 +15,7 @@
 #define UsingLicenseVersion 0x00000300
 #define UsingSDK "Qt"
 #define UsingSDKVersion QT_VERSION
-#define ApplicationVersion 0x0A010117
+#define ApplicationVersion 0x0A01025E
 //                            | | | +-Revised Version (Patch)
 //                            | | +---Minor Version
 //                            | +-----Major Version

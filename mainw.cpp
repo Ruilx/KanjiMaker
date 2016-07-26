@@ -55,6 +55,35 @@ void MainW::createMenus()
 	this->menuBar()->addMenu(this->helpMenu);
 }
 
+void MainW::closeEvent(QCloseEvent *event)
+{
+	if(this->statement & FileModified){
+		int cancelled = 0;
+		int result = QMessageBox::question(this, ApplicationName, tr("You have modified the project, are you really want to create new file?"), QMessageBox::Yes | QMessageBox::Save | QMessageBox::Cancel);
+		switch(result){
+			case QMessageBox::Yes:
+			case QMessageBox::Discard: cancelled = 0; break;
+			case QMessageBox::Save:
+				//save file
+				{
+					bool isSaved = this->saveFileSlot();
+					if(isSaved == false){
+						cancelled = 1;
+					}
+				}
+				break;
+			case QMessageBox::No:
+			case QMessageBox::Cancel: cancelled = 1; break;
+		}
+		if(cancelled == 1){
+			event->ignore();
+			return;
+		}
+	}
+	event->accept();
+	return;
+}
+
 MainW::MainW(QWidget *parent)
 	: QMainWindow(parent)
 {
@@ -370,12 +399,12 @@ void MainW::wordListClicked(int index)
 
 void MainW::wordListRemoved(int index)
 {
-	qDebug() << "[DEBUG]MainW::wordListRemoved word[" << index << "]";
-	if(index >= this->word.length()){
+	if(index >= this->word.length() || index < 0){
 		qDebug() << "Word List: index:" << index << "not found, will update word list.";
 		this->wordListWidget->setList(this->word);
 		return;
 	}
+	qDebug() << "[DEBUG]MainW::wordListRemoved word[" << index << "]";
 	KanjiWord w = this->word.at(index);
 	if(w.kana != this->wordPadWidget->getKana()){
 		qDebug() << "Kanji Word: Kana:" << w.kana << "is not same to" << this->wordPadWidget->getKana();
@@ -401,7 +430,7 @@ void MainW::wordListRemoved(int index)
 void MainW::wordListMovedUp(int index)
 {
 	qDebug() << "[DEBUG]MainW::wordListMovedUp word[" << index << "]";
-	if(index >= this->word.length()){
+	if(index >= this->word.length() || index < 0){
 		qDebug() << "Word List: index:" << index << "not found, will update word list.";
 		this->wordListWidget->setList(this->word);
 		return;
@@ -417,7 +446,7 @@ void MainW::wordListMovedUp(int index)
 void MainW::wordListMovedDown(int index)
 {
 	qDebug() << "[DEBUG]MainW::wordListMovedDown word[" << index << "]";
-	if(index >= this->word.length()){
+	if(index >= this->word.length() || index < 0){
 		qDebug() << "Word List: index:" << index << "not found, will update word list.";
 		this->wordListWidget->setList(this->word);
 		return;
@@ -432,6 +461,9 @@ void MainW::wordListMovedDown(int index)
 
 void MainW::wordListDraged(int from, int to)
 {
+	if(to == -1){
+		to = this->word.length() -1;
+	}
 	qDebug() << "[DEBUG]MainW::wordListDraged word[" << from << "] swapped with [" << to << "].";
 	if(from >= this->word.length() || to >= this->word.length()){
 		qDebug() << "Word List: index:" << from << "and:" << to << "not found, will update word list.";
@@ -473,7 +505,16 @@ void MainW::wordListEmpty()
 void MainW::saveToList()
 {
 	qDebug() << "[DEBUG]MainW::saveToList word[" << this->currentWordIndex << "]";
-	if(this->currentWordIndex == -1){
+	if(this->currentWordIndex == -1 || this->currentWordIndex >= this->word.length()){
+		qDebug() << "add to index: [" << this->currentWordIndex << "] but list length only: [" << this->word.length() << "].";
+		KanjiWord w;
+		w.kana = this->wordPadWidget->getKana();
+		w.kanji = this->wordPadWidget->getKanji();
+		w.chinese = this->wordPadWidget->getChinese();
+		w.english = this->wordPadWidget->getEnglish();
+		this->word.append(w);
+		this->wordListWidget->setList(this->word);
+		this->wordModifiedStatement();
 		return;
 	}
 	this->word[this->currentWordIndex].kana = this->wordPadWidget->getKana();

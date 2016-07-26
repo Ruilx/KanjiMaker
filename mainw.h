@@ -53,6 +53,7 @@ class MainW : public QMainWindow
 	Head head;
 
 	void createMenus();
+	void closeEvent(QCloseEvent *event);
 public:
 	MainW(QWidget *parent = 0);
 	~MainW();
